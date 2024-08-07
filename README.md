@@ -1,16 +1,12 @@
-# sessio_ui
+# sessio-gui
 
-A new Flutter project.
+A cross-platform GUI implementation made with Flutter for [sessio](https://github.com/0xc0ffee1/sessio)
 
-## Getting Started
+## Supported Platforms
+- Mobile: Android
+- Desktop: Linux and Windows
 
-This project is a starting point for a Flutter application.
+## Installation & Usage
 
-A few resources to get you started if this is your first Flutter project:
-
-- [Lab: Write your first Flutter app](https://docs.flutter.dev/get-started/codelab)
-- [Cookbook: Useful Flutter samples](https://docs.flutter.dev/cookbook)
-
-For help getting started with Flutter development, view the
-[online documentation](https://docs.flutter.dev/), which offers tutorials,
-samples, guidance on mobile development, and a full API reference.
+1. Download the latest release for your platform
+2. Run it, make sure to have the sessio client daemon running
