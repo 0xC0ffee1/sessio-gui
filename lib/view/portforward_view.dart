@@ -7,18 +7,19 @@ class PortForwardView extends SessionView {
   final int localPort;
   final String remoteAddress;
   final int remotePort;
-  
 
   PortForwardView({
     required this.localAddress,
     required this.localPort,
     required this.remoteAddress,
-    required this.remotePort, required super.sessionId, required super.sessionData,
+    required this.remotePort,
+    required super.sessionId,
+    required super.sessionData,
   });
 
   @override
   _PortForwardViewState createState() => _PortForwardViewState();
-  
+
   @override
   Future<void> connect(BuildContext context) {
     // TODO: implement connect
@@ -27,7 +28,6 @@ class PortForwardView extends SessionView {
 }
 
 class _PortForwardViewState extends SessionViewState<PortForwardView> {
-
   @override
   Widget buildSessionView(BuildContext context) {
     return Scaffold(

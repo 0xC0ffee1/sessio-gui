@@ -16,17 +16,22 @@ class TerminalSessionView extends SessionView {
   final SessioTerminalState terminalState;
   final dynamic keyboard;
 
-  TerminalSessionView({required this.terminalState, required this.keyboard, required super.sessionId, required super.sessionData});
+  TerminalSessionView(
+      {required this.terminalState,
+      required this.keyboard,
+      required super.sessionId,
+      required super.sessionData});
 
   @override
   _TerminalSessionViewState createState() {
     print("STATE CREATED!");
     return _TerminalSessionViewState();
   }
-  
+
   @override
   Future<void> connect(BuildContext context) async {
-    Provider.of<GrpcService>(context, listen: false).connectPTY(terminalState, sessionId);
+    Provider.of<GrpcService>(context, listen: false)
+        .connectPTY(terminalState, sessionId);
   }
 }
 

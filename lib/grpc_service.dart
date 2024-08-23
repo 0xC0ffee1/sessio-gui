@@ -100,7 +100,6 @@ class GrpcService {
           ..coordinatorUrl = settings.coordinatorUrl
           ..targetId = data.deviceId
           ..ownIpv6 = wifiIPv6);
-          
 
     NewSessionResponse sessionResponse =
         await client.newSession(NewSessionRequest()
@@ -111,10 +110,11 @@ class GrpcService {
     return sessionResponse;
   }
 
-  Future<void> newSession(SessionData data, SessioTerminalState? terminalState) async {
+  Future<void> newSession(
+      SessionData data, SessioTerminalState? terminalState) async {
     final res = await newSshSession(data);
     data.sessionId = res.sessionId;
-    switch(data.whichKind()) {
+    switch (data.whichKind()) {
       case SessionData_Kind.pty:
         connectPTY(terminalState!, res.sessionId);
         break;
@@ -126,11 +126,13 @@ class GrpcService {
         break;
       case SessionData_Kind.notSet:
         break;
-    };
+    }
+    ;
   }
 
-    Future<void> reconnectSession(SessionData data, String sessionId, SessioTerminalState? terminalState) async {
-    switch(data.whichKind()) {
+  Future<void> reconnectSession(SessionData data, String sessionId,
+      SessioTerminalState? terminalState) async {
+    switch (data.whichKind()) {
       case SessionData_Kind.pty:
         connectPTY(terminalState!, sessionId);
         break;
@@ -142,7 +144,8 @@ class GrpcService {
         break;
       case SessionData_Kind.notSet:
         break;
-    };
+    }
+    ;
   }
 
   Future<SftpBrowser> connectSFTP(SessionData data, String sessionId) async {
@@ -160,7 +163,7 @@ class GrpcService {
     await client.localPortForward(data);
   }
 
-void reconnectPTY(SessioTerminalState state, String sessionId) async {
+  void reconnectPTY(SessioTerminalState state, String sessionId) async {
     state.streamController = StreamController();
     final streamController = state.streamController;
     var t = DateTime.now().millisecondsSinceEpoch;
@@ -168,13 +171,13 @@ void reconnectPTY(SessioTerminalState state, String sessionId) async {
     final responseStream = client.openChannel(streamController.stream);
     state.terminal.write("Reconnected!\r\n");
 
-    streamController.add(Msg()..channelInit = (Msg_ChannelInit()..sessionId = sessionId));
+    streamController
+        .add(Msg()..channelInit = (Msg_ChannelInit()..sessionId = sessionId));
 
-        streamController.add(Msg()
-    ..ptyRequest = (Msg_PtyRequest()
-      ..colWidth = state.terminal.viewWidth
-      ..rowHeight = state.terminal.viewHeight));
-
+    streamController.add(Msg()
+      ..ptyRequest = (Msg_PtyRequest()
+        ..colWidth = state.terminal.viewWidth
+        ..rowHeight = state.terminal.viewHeight));
 
     streamController.add(Msg()..shellRequest = (Msg_ShellRequest()));
   }
@@ -187,12 +190,13 @@ void reconnectPTY(SessioTerminalState state, String sessionId) async {
     final responseStream = client.openChannel(streamController.stream);
     state.terminal.write("Connected! Session ID is: ${sessionId} \r\n");
 
-    streamController.add(Msg()..channelInit = (Msg_ChannelInit()..sessionId = sessionId));
+    streamController
+        .add(Msg()..channelInit = (Msg_ChannelInit()..sessionId = sessionId));
 
-        streamController.add(Msg()
-    ..ptyRequest = (Msg_PtyRequest()
-      ..colWidth = state.terminal.viewWidth
-      ..rowHeight = state.terminal.viewHeight));
+    streamController.add(Msg()
+      ..ptyRequest = (Msg_PtyRequest()
+        ..colWidth = state.terminal.viewWidth
+        ..rowHeight = state.terminal.viewHeight));
 
     streamController.add(Msg()..shellRequest = (Msg_ShellRequest()));
 
@@ -224,7 +228,7 @@ void reconnectPTY(SessioTerminalState state, String sessionId) async {
 
     //This will trigger a redraw
     //Also causes weird bash malloc issues
-    
+
     // Handle responses
     await for (var response in responseStream) {
       // Handle the response

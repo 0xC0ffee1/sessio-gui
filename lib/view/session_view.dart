@@ -7,22 +7,22 @@ import 'package:grpc/grpc.dart' as grpc;
 abstract class SessionView extends StatefulWidget {
   final String sessionId;
   final SessionData sessionData;
-  
-  SessionView({required this.sessionId, required this.sessionData}) : super(key: ValueKey(sessionId));
+
+  SessionView({required this.sessionId, required this.sessionData})
+      : super(key: ValueKey(sessionId));
 }
 
 abstract class SessionViewState<T extends SessionView> extends State<T> {
-
   bool _showLocalDialog = false;
   String _errorMsg = "";
   String _errorTitle = "";
-
 
   @override
   void didChangeDependencies() {
     super.didChangeDependencies();
 
-    final session = Provider.of<SessionManager>(context).getSession(widget.sessionId);
+    final session =
+        Provider.of<SessionManager>(context).getSession(widget.sessionId);
 
     if (session?.closed == true && !_showLocalDialog) {
       WidgetsBinding.instance.addPostFrameCallback((_) {
@@ -58,8 +58,7 @@ abstract class SessionViewState<T extends SessionView> extends State<T> {
                     final grpcError = snapshot.error as grpc.GrpcError;
                     _errorTitle = "Connection error";
                     _errorMsg = grpcError.message ?? "Unknown gRPC error";
-                  }
-                  else {
+                  } else {
                     _errorTitle = "Connection error";
                     _errorMsg = snapshot.error.toString();
                   }
@@ -101,7 +100,9 @@ abstract class SessionViewState<T extends SessionView> extends State<T> {
                         TextButton(
                           onPressed: () {
                             setState(() {
-                              Provider.of<SessionManager>(context, listen: false).reconnectSession(context, widget.sessionId);
+                              Provider.of<SessionManager>(context,
+                                      listen: false)
+                                  .reconnectSession(context, widget.sessionId);
                               _showLocalDialog = false;
                             });
                             // Optionally, you might want to reconnect or take other action here

@@ -1,6 +1,4 @@
-
 import 'package:flutter/material.dart';
-
 
 class SetupWidget extends StatefulWidget {
   final Function(String, String) onSubmit;
@@ -33,11 +31,11 @@ class _SetupWidgetState extends State<SetupWidget> {
     }
   }
 
-@override
-Widget build(BuildContext context) {
-  final double panelWidth = MediaQuery.of(context).size.width * 0.3;
+  @override
+  Widget build(BuildContext context) {
+    final double panelWidth = MediaQuery.of(context).size.width * 0.3;
 
-  return Center(
+    return Center(
       child: SingleChildScrollView(
         padding: const EdgeInsets.all(16.0),
         child: Container(
@@ -95,6 +93,5 @@ Widget build(BuildContext context) {
         ),
       ),
     );
+  }
 }
-}
-

@@ -61,7 +61,8 @@ class _MyHomePageState extends State<MyHomePage> {
     super.initState();
     _loadSessions();
     initAndroid();
-    _daemonHealthChecker();
+    _checkDaemonHealth(null);
+    _healthTimer = Timer.periodic(Duration(seconds: 5), _checkDaemonHealth);
   }
 
   void initAndroid() {
@@ -70,10 +71,12 @@ class _MyHomePageState extends State<MyHomePage> {
     initializeService();
   }
 
-  Future<void> checkSettingsValidity() async{
-    final valid = 
-            (await Provider.of<GrpcService>(context, listen: false).client.startCoordinator(CoordinatorStartRequest())).started;
-    
+  Future<void> checkSettingsValidity() async {
+    final valid = (await Provider.of<GrpcService>(context, listen: false)
+            .client
+            .startCoordinator(CoordinatorStartRequest()))
+        .started;
+
     setState(() {
       _settingsValid = valid;
     });
@@ -84,53 +87,52 @@ class _MyHomePageState extends State<MyHomePage> {
     sessionTree = HashMap();
   }
 
-  void _daemonHealthChecker() {
-    _healthTimer = Timer.periodic(Duration(seconds: 10), (timer) async {
-      try {
-        final nat = await Provider.of<GrpcService>(context, listen: false).client.getNatFilterType(NatFilterRequest());
-        
-      } catch (e) {
-        if (e is grpc.GrpcError) {
-          if (e.code == grpc.StatusCode.unavailable && !_isDaemonErrorOpen) {
-            _isDaemonErrorOpen = true;
-            await showDialog(
-                context: navigatorKey.currentContext!,
-                builder: (BuildContext context) {
-                  return AlertDialog(
-                    title: Row(
-                      children: [
-                        Icon(Icons.error, color: Colors.red),
-                        SizedBox(width: 10),
-                        Text('Could not connect to daemon'),
-                      ],
-                    ),
-                    content: Text(e.message!),
-                    actions: [
-                      TextButton(
-                        onPressed: () {
-                          Navigator.pop(context);
-                          resetSessions();
-                          serviceFuture = _loadSessions();
-                          _isDaemonErrorOpen = false;
-                        },
-                        child: Text('Retry'),
-                      ),
-                      TextButton(
-                        onPressed: () {
-                          exit(0);
-                        },
-                        child: Text('Quit'),
-                      ),
-                    ],
-                  );
-                },
+  void _checkDaemonHealth(Timer? timer) async {
+    try {
+      final nat = await Provider.of<GrpcService>(context, listen: false)
+          .client
+          .getNatFilterType(NatFilterRequest());
+    } catch (e) {
+      if (e is grpc.GrpcError) {
+        if (e.code == grpc.StatusCode.unavailable && !_isDaemonErrorOpen) {
+          _isDaemonErrorOpen = true;
+          await showDialog(
+            context: navigatorKey.currentContext!,
+            builder: (BuildContext context) {
+              return AlertDialog(
+                title: Row(
+                  children: [
+                    Icon(Icons.error, color: Colors.red),
+                    SizedBox(width: 10),
+                    Text('Could not connect to daemon'),
+                  ],
+                ),
+                content: Text(e.message!),
+                actions: [
+                  TextButton(
+                    onPressed: () {
+                      Navigator.pop(context);
+                      resetSessions();
+                      serviceFuture = _loadSessions();
+                      _isDaemonErrorOpen = false;
+                    },
+                    child: Text('Retry'),
+                  ),
+                  TextButton(
+                    onPressed: () {
+                      exit(0);
+                    },
+                    child: Text('Quit'),
+                  ),
+                ],
               );
-          }
+            },
+          );
+        }
       } else {
         print('Error during daemon check: $e');
       }
-      }
-    });
+    }
   }
 
   void listenToEvents() async {
@@ -142,8 +144,9 @@ class _MyHomePageState extends State<MyHomePage> {
       switch (event.whichKind()) {
         case ClientEvent_Kind.close:
           {
-            final sessionManager = Provider.of<SessionManager>(context, listen: false);
-            if(event.close.streamType == ClientEvent_StreamType.TRANSPORT) {
+            final sessionManager =
+                Provider.of<SessionManager>(context, listen: false);
+            if (event.close.streamType == ClientEvent_StreamType.TRANSPORT) {
               //Marking it as offline
               setState(() {
                 sessionManager.setDeviceStatus(event.close.id, false);
@@ -151,8 +154,7 @@ class _MyHomePageState extends State<MyHomePage> {
 
               final sessions = sessionManager.getDeviceSessions(event.close.id);
               sessions?.forEach((sesId) => sessionManager.closeSession(sesId));
-            } 
-            else {
+            } else {
               sessionManager.closeSession(event.close.id);
             }
             break;
@@ -169,7 +171,7 @@ class _MyHomePageState extends State<MyHomePage> {
     await serviceFuture;
 
     await checkSettingsValidity();
-    
+
     final sessionMap = await service.getActiveSessions();
 
     ScaffoldMessenger.of(navigatorKey.currentContext!).showSnackBar(
@@ -446,11 +448,13 @@ class _MyHomePageState extends State<MyHomePage> {
 
     setState(() {
       sessionViews[sessionIdActual] = PortForwardView(
-          localAddress: hostLocal,
-          localPort: portLocal,
-          remoteAddress: hostRemote,
-          remotePort: portRemote,
-          sessionId: sessionResponse.sessionId, sessionData: data,);
+        localAddress: hostLocal,
+        localPort: portLocal,
+        remoteAddress: hostRemote,
+        remotePort: portRemote,
+        sessionId: sessionResponse.sessionId,
+        sessionData: data,
+      );
     });
   }
 
@@ -499,19 +503,21 @@ class _MyHomePageState extends State<MyHomePage> {
           username: username,
           deviceId: clientId,
           pty: SessionData_PTYSession());
-      
+
       setState(() {
-              sessionViews[sessionIdFinal] = TerminalSessionView(
-        terminalState: sessionState,
-        keyboard: keyboard, sessionId: sessionIdFinal, sessionData: data,
-      );
+        sessionViews[sessionIdFinal] = TerminalSessionView(
+          terminalState: sessionState,
+          keyboard: keyboard,
+          sessionId: sessionIdFinal,
+          sessionData: data,
+        );
       });
 
       print("added session 2.1");
 
-      Provider.of<SessionManager>(context, listen: false).createSession(context, data, sessionState);
+      Provider.of<SessionManager>(context, listen: false)
+          .createSession(context, data, sessionState);
       print("added session 3!");
-
     } else if (type == "SFTP") {
       final data = SessionData(
           sessionId: sessionId,
@@ -523,10 +529,13 @@ class _MyHomePageState extends State<MyHomePage> {
       SftpBrowser browser =
           await Provider.of<GrpcService>(context, listen: false)
               .connectSFTP(data, sessionResponse.sessionId);
-              
+
       setState(() {
-        sessionViews[sessionResponse.sessionId] =
-            FileBrowserView(browser: browser, sessionId: sessionResponse.sessionId, sessionData: data,);
+        sessionViews[sessionResponse.sessionId] = FileBrowserView(
+          browser: browser,
+          sessionId: sessionResponse.sessionId,
+          sessionData: data,
+        );
       });
     }
   }
@@ -537,7 +546,8 @@ class _MyHomePageState extends State<MyHomePage> {
         final enabled = sessionManager.getDeviceStatus(deviceId);
         return Tooltip(
           message: enabled ? "Online" : "Offline",
-          child: Icon(Icons.circle_outlined, color: enabled ? Colors.green : Colors.red, size: 15),
+          child: Icon(Icons.circle_outlined,
+              color: enabled ? Colors.green : Colors.red, size: 15),
         );
       },
     );
@@ -699,99 +709,99 @@ class _MyHomePageState extends State<MyHomePage> {
     );
   }
 
-@override
-Widget build(BuildContext context) {
-  return FutureBuilder(
-    future: serviceFuture, // This should be your Future
-    builder: (context, snapshot) {
-      if (snapshot.connectionState == ConnectionState.waiting) {
-        // Show a loading indicator while the future is resolving
-        return Center(
-          child: CircularProgressIndicator(),
-        );
-      } else if (snapshot.hasError) {
-        // Handle errors if the future fails
-        return Center(
-          child: Text('Error: ${snapshot.error}'),
-        );
-      } else {
-        // Once the future is resolved, build the main UI
-        if (!_settingsValid) {
-          return SettingsPage(caption: "Initial Setup",
-          onSubmit: () {
-            checkSettingsValidity();
-          });
-        }
-        return Scaffold(
-          body: LayoutBuilder(
-            builder: (context, constraints) {
-              if (constraints.maxWidth > 600) {
-                // Larger screens
-                return Row(
-                  children: [
-                    _buildMioLeftNavRail(),
-                    Expanded(
-                      child: AnimatedSwitcher(
-                        duration: Duration(milliseconds: 100),
-                        transitionBuilder:
-                            (Widget child, Animation<double> animation) {
-                          return FadeTransition(
-                            opacity: animation,
-                            child: child,
-                          );
-                        },
-                        child: _selectedRailIndex == 0
-                            ? _buildSessionPage()
-                            : SettingsPage(),
+  @override
+  Widget build(BuildContext context) {
+    return FutureBuilder(
+      future: serviceFuture, // This should be your Future
+      builder: (context, snapshot) {
+        if (snapshot.connectionState == ConnectionState.waiting) {
+          // Show a loading indicator while the future is resolving
+          return Center(
+            child: CircularProgressIndicator(),
+          );
+        } else if (snapshot.hasError) {
+          // Handle errors if the future fails
+          return Center(
+            child: Text('Error: ${snapshot.error}'),
+          );
+        } else {
+          // Once the future is resolved, build the main UI
+          if (!_settingsValid) {
+            return SettingsPage(
+                caption: "Initial Setup",
+                onSubmit: () {
+                  checkSettingsValidity();
+                });
+          }
+          return Scaffold(
+            body: LayoutBuilder(
+              builder: (context, constraints) {
+                if (constraints.maxWidth > 600) {
+                  // Larger screens
+                  return Row(
+                    children: [
+                      _buildMioLeftNavRail(),
+                      Expanded(
+                        child: AnimatedSwitcher(
+                          duration: Duration(milliseconds: 100),
+                          transitionBuilder:
+                              (Widget child, Animation<double> animation) {
+                            return FadeTransition(
+                              opacity: animation,
+                              child: child,
+                            );
+                          },
+                          child: _selectedRailIndex == 0
+                              ? _buildSessionPage()
+                              : SettingsPage(),
+                        ),
                       ),
-                    ),
-                  ],
-                );
-              } else {
-                // Smaller screens
-                return Column(
-                  children: [
-                    Expanded(
-                      child: PageView(
-                        controller: _pageController,
-                        onPageChanged: (index) {
+                    ],
+                  );
+                } else {
+                  // Smaller screens
+                  return Column(
+                    children: [
+                      Expanded(
+                        child: PageView(
+                          controller: _pageController,
+                          onPageChanged: (index) {
+                            setState(() {
+                              _selectedRailIndex = index;
+                            });
+                          },
+                          children: [_buildSessionPageSmall(), SettingsPage()],
+                        ),
+                      ),
+                      BottomNavigationBar(
+                        currentIndex: _selectedRailIndex,
+                        onTap: (int index) {
                           setState(() {
                             _selectedRailIndex = index;
+                            _pageController.animateToPage(index,
+                                duration: Duration(milliseconds: 200),
+                                curve: Curves.easeIn);
                           });
                         },
-                        children: [_buildSessionPageSmall(), SettingsPage()],
+                        items: [
+                          BottomNavigationBarItem(
+                            icon: Icon(Icons.home),
+                            label: 'Sessions',
+                          ),
+                          BottomNavigationBarItem(
+                            icon: Icon(Icons.settings),
+                            label: 'Settings',
+                          ),
+                        ],
                       ),
-                    ),
-                    BottomNavigationBar(
-                      currentIndex: _selectedRailIndex,
-                      onTap: (int index) {
-                        setState(() {
-                          _selectedRailIndex = index;
-                          _pageController.animateToPage(index,
-                              duration: Duration(milliseconds: 200),
-                              curve: Curves.easeIn);
-                        });
-                      },
-                      items: [
-                        BottomNavigationBarItem(
-                          icon: Icon(Icons.home),
-                          label: 'Sessions',
-                        ),
-                        BottomNavigationBarItem(
-                          icon: Icon(Icons.settings),
-                          label: 'Settings',
-                        ),
-                      ],
-                    ),
-                  ],
-                );
-              }
-            },
-          ),
-        );
-      }
-    },
-  );
+                    ],
+                  );
+                }
+              },
+            ),
+          );
+        }
+      },
+    );
+  }
 }
-}
-

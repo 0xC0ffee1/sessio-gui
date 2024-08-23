@@ -113,14 +113,16 @@ class FileBrowserView extends SessionView {
   final FileBrowser _browser;
 
   FileBrowserView({
-    required FileBrowser browser, required super.sessionId, required super.sessionData,
-  })  : _browser = browser;
+    required FileBrowser browser,
+    required super.sessionId,
+    required super.sessionData,
+  }) : _browser = browser;
 
   @override
   _FileBrowserViewState createState() {
     return _FileBrowserViewState();
   }
-  
+
   @override
   Future<void> connect(BuildContext context) async {
     //Provider.of<GrpcService>(context, listen: false).connectSFTP(terminalState, sessionId);
@@ -129,7 +131,6 @@ class FileBrowserView extends SessionView {
 
 class _FileBrowserViewState extends SessionViewState<FileBrowserView>
     with AutomaticKeepAliveClientMixin {
-
   void _startFileTransfer(int fileSize, Stream<TransferStatus> transferStream) {
     setState(() {
       widget._browser.setCurrentTransferData(
