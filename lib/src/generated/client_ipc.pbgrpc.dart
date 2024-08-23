@@ -21,75 +21,66 @@ export 'client_ipc.pb.dart';
 
 @$pb.GrpcServiceName('clientipc.ClientIPC')
 class ClientIPCClient extends $grpc.Client {
-  static final _$initClient = $grpc.ClientMethod<$0.InitData, $0.InitResponse>(
-      '/clientipc.ClientIPC/InitClient',
-      ($0.InitData value) => value.writeToBuffer(),
-      ($core.List<$core.int> value) => $0.InitResponse.fromBuffer(value));
-  static final _$newConnection =
-      $grpc.ClientMethod<$0.NewConnectionRequest, $0.NewConnectionResponse>(
-          '/clientipc.ClientIPC/NewConnection',
-          ($0.NewConnectionRequest value) => value.writeToBuffer(),
-          ($core.List<$core.int> value) =>
-              $0.NewConnectionResponse.fromBuffer(value));
-  static final _$newSession =
-      $grpc.ClientMethod<$0.NewSessionRequest, $0.NewSessionResponse>(
-          '/clientipc.ClientIPC/NewSession',
-          ($0.NewSessionRequest value) => value.writeToBuffer(),
-          ($core.List<$core.int> value) =>
-              $0.NewSessionResponse.fromBuffer(value));
-  static final _$genKeys =
-      $grpc.ClientMethod<$0.GenKeysRequest, $0.GenKeysResponse>(
-          '/clientipc.ClientIPC/GenKeys',
-          ($0.GenKeysRequest value) => value.writeToBuffer(),
-          ($core.List<$core.int> value) =>
-              $0.GenKeysResponse.fromBuffer(value));
-  static final _$getPublicKey =
-      $grpc.ClientMethod<$0.GetKeyRequest, $0.PublicKey>(
-          '/clientipc.ClientIPC/GetPublicKey',
-          ($0.GetKeyRequest value) => value.writeToBuffer(),
-          ($core.List<$core.int> value) => $0.PublicKey.fromBuffer(value));
+  static final _$newConnection = $grpc.ClientMethod<$0.NewConnectionRequest, $0.NewConnectionResponse>(
+      '/clientipc.ClientIPC/NewConnection',
+      ($0.NewConnectionRequest value) => value.writeToBuffer(),
+      ($core.List<$core.int> value) => $0.NewConnectionResponse.fromBuffer(value));
+  static final _$newSession = $grpc.ClientMethod<$0.NewSessionRequest, $0.NewSessionResponse>(
+      '/clientipc.ClientIPC/NewSession',
+      ($0.NewSessionRequest value) => value.writeToBuffer(),
+      ($core.List<$core.int> value) => $0.NewSessionResponse.fromBuffer(value));
+  static final _$genKeys = $grpc.ClientMethod<$0.GenKeysRequest, $0.GenKeysResponse>(
+      '/clientipc.ClientIPC/GenKeys',
+      ($0.GenKeysRequest value) => value.writeToBuffer(),
+      ($core.List<$core.int> value) => $0.GenKeysResponse.fromBuffer(value));
+  static final _$getPublicKey = $grpc.ClientMethod<$0.GetKeyRequest, $0.PublicKey>(
+      '/clientipc.ClientIPC/GetPublicKey',
+      ($0.GetKeyRequest value) => value.writeToBuffer(),
+      ($core.List<$core.int> value) => $0.PublicKey.fromBuffer(value));
   static final _$openChannel = $grpc.ClientMethod<$0.Msg, $0.Msg>(
       '/clientipc.ClientIPC/OpenChannel',
       ($0.Msg value) => value.writeToBuffer(),
       ($core.List<$core.int> value) => $0.Msg.fromBuffer(value));
-  static final _$localPortForward =
-      $grpc.ClientMethod<$0.SessionData, $0.LocalPortForwardResponse>(
-          '/clientipc.ClientIPC/LocalPortForward',
-          ($0.SessionData value) => value.writeToBuffer(),
-          ($core.List<$core.int> value) =>
-              $0.LocalPortForwardResponse.fromBuffer(value));
-  static final _$openSftpChannel =
-      $grpc.ClientMethod<$0.SessionData, $0.SftpRequestResponse>(
-          '/clientipc.ClientIPC/OpenSftpChannel',
-          ($0.SessionData value) => value.writeToBuffer(),
-          ($core.List<$core.int> value) =>
-              $0.SftpRequestResponse.fromBuffer(value));
+  static final _$checkSettingsValidity = $grpc.ClientMethod<$0.SettingCheckRequest, $0.SettingCheckResponse>(
+      '/clientipc.ClientIPC/CheckSettingsValidity',
+      ($0.SettingCheckRequest value) => value.writeToBuffer(),
+      ($core.List<$core.int> value) => $0.SettingCheckResponse.fromBuffer(value));
+  static final _$startCoordinator = $grpc.ClientMethod<$0.CoordinatorStartRequest, $0.CoordinatorStartResponse>(
+      '/clientipc.ClientIPC/StartCoordinator',
+      ($0.CoordinatorStartRequest value) => value.writeToBuffer(),
+      ($core.List<$core.int> value) => $0.CoordinatorStartResponse.fromBuffer(value));
+  static final _$localPortForward = $grpc.ClientMethod<$0.SessionData, $0.LocalPortForwardResponse>(
+      '/clientipc.ClientIPC/LocalPortForward',
+      ($0.SessionData value) => value.writeToBuffer(),
+      ($core.List<$core.int> value) => $0.LocalPortForwardResponse.fromBuffer(value));
+  static final _$getNatFilterType = $grpc.ClientMethod<$0.NatFilterRequest, $0.NatFilterResponse>(
+      '/clientipc.ClientIPC/GetNatFilterType',
+      ($0.NatFilterRequest value) => value.writeToBuffer(),
+      ($core.List<$core.int> value) => $0.NatFilterResponse.fromBuffer(value));
+  static final _$openSftpChannel = $grpc.ClientMethod<$0.SessionData, $0.SftpRequestResponse>(
+      '/clientipc.ClientIPC/OpenSftpChannel',
+      ($0.SessionData value) => value.writeToBuffer(),
+      ($core.List<$core.int> value) => $0.SftpRequestResponse.fromBuffer(value));
   static final _$listDirectory = $grpc.ClientMethod<$0.Path, $0.FileList>(
       '/clientipc.ClientIPC/ListDirectory',
       ($0.Path value) => value.writeToBuffer(),
       ($core.List<$core.int> value) => $0.FileList.fromBuffer(value));
-  static final _$fileDownload =
-      $grpc.ClientMethod<$0.FileTransferRequest, $0.FileTransferStatus>(
-          '/clientipc.ClientIPC/FileDownload',
-          ($0.FileTransferRequest value) => value.writeToBuffer(),
-          ($core.List<$core.int> value) =>
-              $0.FileTransferStatus.fromBuffer(value));
-  static final _$fileUpload =
-      $grpc.ClientMethod<$0.FileTransferRequest, $0.FileTransferStatus>(
-          '/clientipc.ClientIPC/FileUpload',
-          ($0.FileTransferRequest value) => value.writeToBuffer(),
-          ($core.List<$core.int> value) =>
-              $0.FileTransferStatus.fromBuffer(value));
-  static final _$getSettings =
-      $grpc.ClientMethod<$0.SettingsRequest, $0.Settings>(
-          '/clientipc.ClientIPC/GetSettings',
-          ($0.SettingsRequest value) => value.writeToBuffer(),
-          ($core.List<$core.int> value) => $0.Settings.fromBuffer(value));
-  static final _$getSaveData =
-      $grpc.ClientMethod<$0.GetSaveDataRequest, $0.UserData>(
-          '/clientipc.ClientIPC/GetSaveData',
-          ($0.GetSaveDataRequest value) => value.writeToBuffer(),
-          ($core.List<$core.int> value) => $0.UserData.fromBuffer(value));
+  static final _$fileDownload = $grpc.ClientMethod<$0.FileTransferRequest, $0.FileTransferStatus>(
+      '/clientipc.ClientIPC/FileDownload',
+      ($0.FileTransferRequest value) => value.writeToBuffer(),
+      ($core.List<$core.int> value) => $0.FileTransferStatus.fromBuffer(value));
+  static final _$fileUpload = $grpc.ClientMethod<$0.FileTransferRequest, $0.FileTransferStatus>(
+      '/clientipc.ClientIPC/FileUpload',
+      ($0.FileTransferRequest value) => value.writeToBuffer(),
+      ($core.List<$core.int> value) => $0.FileTransferStatus.fromBuffer(value));
+  static final _$getSettings = $grpc.ClientMethod<$0.SettingsRequest, $0.Settings>(
+      '/clientipc.ClientIPC/GetSettings',
+      ($0.SettingsRequest value) => value.writeToBuffer(),
+      ($core.List<$core.int> value) => $0.Settings.fromBuffer(value));
+  static final _$getSaveData = $grpc.ClientMethod<$0.GetSaveDataRequest, $0.UserData>(
+      '/clientipc.ClientIPC/GetSaveData',
+      ($0.GetSaveDataRequest value) => value.writeToBuffer(),
+      ($core.List<$core.int> value) => $0.UserData.fromBuffer(value));
   static final _$saveSettings = $grpc.ClientMethod<$0.Settings, $0.Settings>(
       '/clientipc.ClientIPC/SaveSettings',
       ($0.Settings value) => value.writeToBuffer(),
@@ -98,105 +89,86 @@ class ClientIPCClient extends $grpc.Client {
       '/clientipc.ClientIPC/SaveUserData',
       ($0.UserData value) => value.writeToBuffer(),
       ($core.List<$core.int> value) => $0.UserData.fromBuffer(value));
-  static final _$getActiveSessions =
-      $grpc.ClientMethod<$0.SessionRequest, $0.SessionMap>(
-          '/clientipc.ClientIPC/GetActiveSessions',
-          ($0.SessionRequest value) => value.writeToBuffer(),
-          ($core.List<$core.int> value) => $0.SessionMap.fromBuffer(value));
+  static final _$getActiveSessions = $grpc.ClientMethod<$0.SessionRequest, $0.SessionMap>(
+      '/clientipc.ClientIPC/GetActiveSessions',
+      ($0.SessionRequest value) => value.writeToBuffer(),
+      ($core.List<$core.int> value) => $0.SessionMap.fromBuffer(value));
 
   ClientIPCClient($grpc.ClientChannel channel,
       {$grpc.CallOptions? options,
       $core.Iterable<$grpc.ClientInterceptor>? interceptors})
-      : super(channel, options: options, interceptors: interceptors);
+      : super(channel, options: options,
+        interceptors: interceptors);
 
-  $grpc.ResponseFuture<$0.InitResponse> initClient($0.InitData request,
-      {$grpc.CallOptions? options}) {
-    return $createUnaryCall(_$initClient, request, options: options);
-  }
-
-  $grpc.ResponseFuture<$0.NewConnectionResponse> newConnection(
-      $0.NewConnectionRequest request,
-      {$grpc.CallOptions? options}) {
+  $grpc.ResponseFuture<$0.NewConnectionResponse> newConnection($0.NewConnectionRequest request, {$grpc.CallOptions? options}) {
     return $createUnaryCall(_$newConnection, request, options: options);
   }
 
-  $grpc.ResponseFuture<$0.NewSessionResponse> newSession(
-      $0.NewSessionRequest request,
-      {$grpc.CallOptions? options}) {
+  $grpc.ResponseFuture<$0.NewSessionResponse> newSession($0.NewSessionRequest request, {$grpc.CallOptions? options}) {
     return $createUnaryCall(_$newSession, request, options: options);
   }
 
-  $grpc.ResponseFuture<$0.GenKeysResponse> genKeys($0.GenKeysRequest request,
-      {$grpc.CallOptions? options}) {
+  $grpc.ResponseFuture<$0.GenKeysResponse> genKeys($0.GenKeysRequest request, {$grpc.CallOptions? options}) {
     return $createUnaryCall(_$genKeys, request, options: options);
   }
 
-  $grpc.ResponseFuture<$0.PublicKey> getPublicKey($0.GetKeyRequest request,
-      {$grpc.CallOptions? options}) {
+  $grpc.ResponseFuture<$0.PublicKey> getPublicKey($0.GetKeyRequest request, {$grpc.CallOptions? options}) {
     return $createUnaryCall(_$getPublicKey, request, options: options);
   }
 
-  $grpc.ResponseStream<$0.Msg> openChannel($async.Stream<$0.Msg> request,
-      {$grpc.CallOptions? options}) {
+  $grpc.ResponseStream<$0.Msg> openChannel($async.Stream<$0.Msg> request, {$grpc.CallOptions? options}) {
     return $createStreamingCall(_$openChannel, request, options: options);
   }
 
-  $grpc.ResponseFuture<$0.LocalPortForwardResponse> localPortForward(
-      $0.SessionData request,
-      {$grpc.CallOptions? options}) {
+  $grpc.ResponseFuture<$0.SettingCheckResponse> checkSettingsValidity($0.SettingCheckRequest request, {$grpc.CallOptions? options}) {
+    return $createUnaryCall(_$checkSettingsValidity, request, options: options);
+  }
+
+  $grpc.ResponseFuture<$0.CoordinatorStartResponse> startCoordinator($0.CoordinatorStartRequest request, {$grpc.CallOptions? options}) {
+    return $createUnaryCall(_$startCoordinator, request, options: options);
+  }
+
+  $grpc.ResponseFuture<$0.LocalPortForwardResponse> localPortForward($0.SessionData request, {$grpc.CallOptions? options}) {
     return $createUnaryCall(_$localPortForward, request, options: options);
   }
 
-  $grpc.ResponseFuture<$0.SftpRequestResponse> openSftpChannel(
-      $0.SessionData request,
-      {$grpc.CallOptions? options}) {
+  $grpc.ResponseFuture<$0.NatFilterResponse> getNatFilterType($0.NatFilterRequest request, {$grpc.CallOptions? options}) {
+    return $createUnaryCall(_$getNatFilterType, request, options: options);
+  }
+
+  $grpc.ResponseFuture<$0.SftpRequestResponse> openSftpChannel($0.SessionData request, {$grpc.CallOptions? options}) {
     return $createUnaryCall(_$openSftpChannel, request, options: options);
   }
 
-  $grpc.ResponseFuture<$0.FileList> listDirectory($0.Path request,
-      {$grpc.CallOptions? options}) {
+  $grpc.ResponseFuture<$0.FileList> listDirectory($0.Path request, {$grpc.CallOptions? options}) {
     return $createUnaryCall(_$listDirectory, request, options: options);
   }
 
-  $grpc.ResponseStream<$0.FileTransferStatus> fileDownload(
-      $0.FileTransferRequest request,
-      {$grpc.CallOptions? options}) {
-    return $createStreamingCall(
-        _$fileDownload, $async.Stream.fromIterable([request]),
-        options: options);
+  $grpc.ResponseStream<$0.FileTransferStatus> fileDownload($0.FileTransferRequest request, {$grpc.CallOptions? options}) {
+    return $createStreamingCall(_$fileDownload, $async.Stream.fromIterable([request]), options: options);
   }
 
-  $grpc.ResponseStream<$0.FileTransferStatus> fileUpload(
-      $0.FileTransferRequest request,
-      {$grpc.CallOptions? options}) {
-    return $createStreamingCall(
-        _$fileUpload, $async.Stream.fromIterable([request]),
-        options: options);
+  $grpc.ResponseStream<$0.FileTransferStatus> fileUpload($0.FileTransferRequest request, {$grpc.CallOptions? options}) {
+    return $createStreamingCall(_$fileUpload, $async.Stream.fromIterable([request]), options: options);
   }
 
-  $grpc.ResponseFuture<$0.Settings> getSettings($0.SettingsRequest request,
-      {$grpc.CallOptions? options}) {
+  $grpc.ResponseFuture<$0.Settings> getSettings($0.SettingsRequest request, {$grpc.CallOptions? options}) {
     return $createUnaryCall(_$getSettings, request, options: options);
   }
 
-  $grpc.ResponseFuture<$0.UserData> getSaveData($0.GetSaveDataRequest request,
-      {$grpc.CallOptions? options}) {
+  $grpc.ResponseFuture<$0.UserData> getSaveData($0.GetSaveDataRequest request, {$grpc.CallOptions? options}) {
     return $createUnaryCall(_$getSaveData, request, options: options);
   }
 
-  $grpc.ResponseFuture<$0.Settings> saveSettings($0.Settings request,
-      {$grpc.CallOptions? options}) {
+  $grpc.ResponseFuture<$0.Settings> saveSettings($0.Settings request, {$grpc.CallOptions? options}) {
     return $createUnaryCall(_$saveSettings, request, options: options);
   }
 
-  $grpc.ResponseFuture<$0.UserData> saveUserData($0.UserData request,
-      {$grpc.CallOptions? options}) {
+  $grpc.ResponseFuture<$0.UserData> saveUserData($0.UserData request, {$grpc.CallOptions? options}) {
     return $createUnaryCall(_$saveUserData, request, options: options);
   }
 
-  $grpc.ResponseFuture<$0.SessionMap> getActiveSessions(
-      $0.SessionRequest request,
-      {$grpc.CallOptions? options}) {
+  $grpc.ResponseFuture<$0.SessionMap> getActiveSessions($0.SessionRequest request, {$grpc.CallOptions? options}) {
     return $createUnaryCall(_$getActiveSessions, request, options: options);
   }
 }
@@ -206,22 +178,13 @@ abstract class ClientIPCServiceBase extends $grpc.Service {
   $core.String get $name => 'clientipc.ClientIPC';
 
   ClientIPCServiceBase() {
-    $addMethod($grpc.ServiceMethod<$0.InitData, $0.InitResponse>(
-        'InitClient',
-        initClient_Pre,
+    $addMethod($grpc.ServiceMethod<$0.NewConnectionRequest, $0.NewConnectionResponse>(
+        'NewConnection',
+        newConnection_Pre,
         false,
         false,
-        ($core.List<$core.int> value) => $0.InitData.fromBuffer(value),
-        ($0.InitResponse value) => value.writeToBuffer()));
-    $addMethod(
-        $grpc.ServiceMethod<$0.NewConnectionRequest, $0.NewConnectionResponse>(
-            'NewConnection',
-            newConnection_Pre,
-            false,
-            false,
-            ($core.List<$core.int> value) =>
-                $0.NewConnectionRequest.fromBuffer(value),
-            ($0.NewConnectionResponse value) => value.writeToBuffer()));
+        ($core.List<$core.int> value) => $0.NewConnectionRequest.fromBuffer(value),
+        ($0.NewConnectionResponse value) => value.writeToBuffer()));
     $addMethod($grpc.ServiceMethod<$0.NewSessionRequest, $0.NewSessionResponse>(
         'NewSession',
         newSession_Pre,
@@ -250,6 +213,20 @@ abstract class ClientIPCServiceBase extends $grpc.Service {
         true,
         ($core.List<$core.int> value) => $0.Msg.fromBuffer(value),
         ($0.Msg value) => value.writeToBuffer()));
+    $addMethod($grpc.ServiceMethod<$0.SettingCheckRequest, $0.SettingCheckResponse>(
+        'CheckSettingsValidity',
+        checkSettingsValidity_Pre,
+        false,
+        false,
+        ($core.List<$core.int> value) => $0.SettingCheckRequest.fromBuffer(value),
+        ($0.SettingCheckResponse value) => value.writeToBuffer()));
+    $addMethod($grpc.ServiceMethod<$0.CoordinatorStartRequest, $0.CoordinatorStartResponse>(
+        'StartCoordinator',
+        startCoordinator_Pre,
+        false,
+        false,
+        ($core.List<$core.int> value) => $0.CoordinatorStartRequest.fromBuffer(value),
+        ($0.CoordinatorStartResponse value) => value.writeToBuffer()));
     $addMethod($grpc.ServiceMethod<$0.SessionData, $0.LocalPortForwardResponse>(
         'LocalPortForward',
         localPortForward_Pre,
@@ -257,6 +234,13 @@ abstract class ClientIPCServiceBase extends $grpc.Service {
         false,
         ($core.List<$core.int> value) => $0.SessionData.fromBuffer(value),
         ($0.LocalPortForwardResponse value) => value.writeToBuffer()));
+    $addMethod($grpc.ServiceMethod<$0.NatFilterRequest, $0.NatFilterResponse>(
+        'GetNatFilterType',
+        getNatFilterType_Pre,
+        false,
+        false,
+        ($core.List<$core.int> value) => $0.NatFilterRequest.fromBuffer(value),
+        ($0.NatFilterResponse value) => value.writeToBuffer()));
     $addMethod($grpc.ServiceMethod<$0.SessionData, $0.SftpRequestResponse>(
         'OpenSftpChannel',
         openSftpChannel_Pre,
@@ -271,24 +255,20 @@ abstract class ClientIPCServiceBase extends $grpc.Service {
         false,
         ($core.List<$core.int> value) => $0.Path.fromBuffer(value),
         ($0.FileList value) => value.writeToBuffer()));
-    $addMethod(
-        $grpc.ServiceMethod<$0.FileTransferRequest, $0.FileTransferStatus>(
-            'FileDownload',
-            fileDownload_Pre,
-            false,
-            true,
-            ($core.List<$core.int> value) =>
-                $0.FileTransferRequest.fromBuffer(value),
-            ($0.FileTransferStatus value) => value.writeToBuffer()));
-    $addMethod(
-        $grpc.ServiceMethod<$0.FileTransferRequest, $0.FileTransferStatus>(
-            'FileUpload',
-            fileUpload_Pre,
-            false,
-            true,
-            ($core.List<$core.int> value) =>
-                $0.FileTransferRequest.fromBuffer(value),
-            ($0.FileTransferStatus value) => value.writeToBuffer()));
+    $addMethod($grpc.ServiceMethod<$0.FileTransferRequest, $0.FileTransferStatus>(
+        'FileDownload',
+        fileDownload_Pre,
+        false,
+        true,
+        ($core.List<$core.int> value) => $0.FileTransferRequest.fromBuffer(value),
+        ($0.FileTransferStatus value) => value.writeToBuffer()));
+    $addMethod($grpc.ServiceMethod<$0.FileTransferRequest, $0.FileTransferStatus>(
+        'FileUpload',
+        fileUpload_Pre,
+        false,
+        true,
+        ($core.List<$core.int> value) => $0.FileTransferRequest.fromBuffer(value),
+        ($0.FileTransferStatus value) => value.writeToBuffer()));
     $addMethod($grpc.ServiceMethod<$0.SettingsRequest, $0.Settings>(
         'GetSettings',
         getSettings_Pre,
@@ -301,8 +281,7 @@ abstract class ClientIPCServiceBase extends $grpc.Service {
         getSaveData_Pre,
         false,
         false,
-        ($core.List<$core.int> value) =>
-            $0.GetSaveDataRequest.fromBuffer(value),
+        ($core.List<$core.int> value) => $0.GetSaveDataRequest.fromBuffer(value),
         ($0.UserData value) => value.writeToBuffer()));
     $addMethod($grpc.ServiceMethod<$0.Settings, $0.Settings>(
         'SaveSettings',
@@ -327,112 +306,128 @@ abstract class ClientIPCServiceBase extends $grpc.Service {
         ($0.SessionMap value) => value.writeToBuffer()));
   }
 
-  $async.Future<$0.InitResponse> initClient_Pre(
-      $grpc.ServiceCall call, $async.Future<$0.InitData> request) async {
-    return initClient(call, await request);
-  }
-
-  $async.Future<$0.NewConnectionResponse> newConnection_Pre(
-      $grpc.ServiceCall call,
-      $async.Future<$0.NewConnectionRequest> request) async {
+  $async.Future<$0.NewConnectionResponse> newConnection_Pre($grpc.ServiceCall call, $async.Future<$0.NewConnectionRequest> request) async {
     return newConnection(call, await request);
   }
 
-  $async.Future<$0.NewSessionResponse> newSession_Pre($grpc.ServiceCall call,
-      $async.Future<$0.NewSessionRequest> request) async {
+  $async.Future<$0.NewSessionResponse> newSession_Pre($grpc.ServiceCall call, $async.Future<$0.NewSessionRequest> request) async {
     return newSession(call, await request);
   }
 
-  $async.Future<$0.GenKeysResponse> genKeys_Pre(
-      $grpc.ServiceCall call, $async.Future<$0.GenKeysRequest> request) async {
+  $async.Future<$0.GenKeysResponse> genKeys_Pre($grpc.ServiceCall call, $async.Future<$0.GenKeysRequest> request) async {
     return genKeys(call, await request);
   }
 
-  $async.Future<$0.PublicKey> getPublicKey_Pre(
-      $grpc.ServiceCall call, $async.Future<$0.GetKeyRequest> request) async {
+  $async.Future<$0.PublicKey> getPublicKey_Pre($grpc.ServiceCall call, $async.Future<$0.GetKeyRequest> request) async {
     return getPublicKey(call, await request);
   }
 
-  $async.Future<$0.LocalPortForwardResponse> localPortForward_Pre(
-      $grpc.ServiceCall call, $async.Future<$0.SessionData> request) async {
+  $async.Future<$0.SettingCheckResponse> checkSettingsValidity_Pre($grpc.ServiceCall call, $async.Future<$0.SettingCheckRequest> request) async {
+    return checkSettingsValidity(call, await request);
+  }
+
+  $async.Future<$0.CoordinatorStartResponse> startCoordinator_Pre($grpc.ServiceCall call, $async.Future<$0.CoordinatorStartRequest> request) async {
+    return startCoordinator(call, await request);
+  }
+
+  $async.Future<$0.LocalPortForwardResponse> localPortForward_Pre($grpc.ServiceCall call, $async.Future<$0.SessionData> request) async {
     return localPortForward(call, await request);
   }
 
-  $async.Future<$0.SftpRequestResponse> openSftpChannel_Pre(
-      $grpc.ServiceCall call, $async.Future<$0.SessionData> request) async {
+  $async.Future<$0.NatFilterResponse> getNatFilterType_Pre($grpc.ServiceCall call, $async.Future<$0.NatFilterRequest> request) async {
+    return getNatFilterType(call, await request);
+  }
+
+  $async.Future<$0.SftpRequestResponse> openSftpChannel_Pre($grpc.ServiceCall call, $async.Future<$0.SessionData> request) async {
     return openSftpChannel(call, await request);
   }
 
-  $async.Future<$0.FileList> listDirectory_Pre(
-      $grpc.ServiceCall call, $async.Future<$0.Path> request) async {
+  $async.Future<$0.FileList> listDirectory_Pre($grpc.ServiceCall call, $async.Future<$0.Path> request) async {
     return listDirectory(call, await request);
   }
 
-  $async.Stream<$0.FileTransferStatus> fileDownload_Pre($grpc.ServiceCall call,
-      $async.Future<$0.FileTransferRequest> request) async* {
+  $async.Stream<$0.FileTransferStatus> fileDownload_Pre($grpc.ServiceCall call, $async.Future<$0.FileTransferRequest> request) async* {
     yield* fileDownload(call, await request);
   }
 
-  $async.Stream<$0.FileTransferStatus> fileUpload_Pre($grpc.ServiceCall call,
-      $async.Future<$0.FileTransferRequest> request) async* {
+  $async.Stream<$0.FileTransferStatus> fileUpload_Pre($grpc.ServiceCall call, $async.Future<$0.FileTransferRequest> request) async* {
     yield* fileUpload(call, await request);
   }
 
-  $async.Future<$0.Settings> getSettings_Pre(
-      $grpc.ServiceCall call, $async.Future<$0.SettingsRequest> request) async {
+  $async.Future<$0.Settings> getSettings_Pre($grpc.ServiceCall call, $async.Future<$0.SettingsRequest> request) async {
     return getSettings(call, await request);
   }
 
-  $async.Future<$0.UserData> getSaveData_Pre($grpc.ServiceCall call,
-      $async.Future<$0.GetSaveDataRequest> request) async {
+  $async.Future<$0.UserData> getSaveData_Pre($grpc.ServiceCall call, $async.Future<$0.GetSaveDataRequest> request) async {
     return getSaveData(call, await request);
   }
 
-  $async.Future<$0.Settings> saveSettings_Pre(
-      $grpc.ServiceCall call, $async.Future<$0.Settings> request) async {
+  $async.Future<$0.Settings> saveSettings_Pre($grpc.ServiceCall call, $async.Future<$0.Settings> request) async {
     return saveSettings(call, await request);
   }
 
-  $async.Future<$0.UserData> saveUserData_Pre(
-      $grpc.ServiceCall call, $async.Future<$0.UserData> request) async {
+  $async.Future<$0.UserData> saveUserData_Pre($grpc.ServiceCall call, $async.Future<$0.UserData> request) async {
     return saveUserData(call, await request);
   }
 
-  $async.Future<$0.SessionMap> getActiveSessions_Pre(
-      $grpc.ServiceCall call, $async.Future<$0.SessionRequest> request) async {
+  $async.Future<$0.SessionMap> getActiveSessions_Pre($grpc.ServiceCall call, $async.Future<$0.SessionRequest> request) async {
     return getActiveSessions(call, await request);
   }
 
-  $async.Future<$0.InitResponse> initClient(
-      $grpc.ServiceCall call, $0.InitData request);
-  $async.Future<$0.NewConnectionResponse> newConnection(
-      $grpc.ServiceCall call, $0.NewConnectionRequest request);
-  $async.Future<$0.NewSessionResponse> newSession(
-      $grpc.ServiceCall call, $0.NewSessionRequest request);
-  $async.Future<$0.GenKeysResponse> genKeys(
-      $grpc.ServiceCall call, $0.GenKeysRequest request);
-  $async.Future<$0.PublicKey> getPublicKey(
-      $grpc.ServiceCall call, $0.GetKeyRequest request);
-  $async.Stream<$0.Msg> openChannel(
-      $grpc.ServiceCall call, $async.Stream<$0.Msg> request);
-  $async.Future<$0.LocalPortForwardResponse> localPortForward(
-      $grpc.ServiceCall call, $0.SessionData request);
-  $async.Future<$0.SftpRequestResponse> openSftpChannel(
-      $grpc.ServiceCall call, $0.SessionData request);
-  $async.Future<$0.FileList> listDirectory(
-      $grpc.ServiceCall call, $0.Path request);
-  $async.Stream<$0.FileTransferStatus> fileDownload(
-      $grpc.ServiceCall call, $0.FileTransferRequest request);
-  $async.Stream<$0.FileTransferStatus> fileUpload(
-      $grpc.ServiceCall call, $0.FileTransferRequest request);
-  $async.Future<$0.Settings> getSettings(
-      $grpc.ServiceCall call, $0.SettingsRequest request);
-  $async.Future<$0.UserData> getSaveData(
-      $grpc.ServiceCall call, $0.GetSaveDataRequest request);
-  $async.Future<$0.Settings> saveSettings(
-      $grpc.ServiceCall call, $0.Settings request);
-  $async.Future<$0.UserData> saveUserData(
-      $grpc.ServiceCall call, $0.UserData request);
-  $async.Future<$0.SessionMap> getActiveSessions(
-      $grpc.ServiceCall call, $0.SessionRequest request);
+  $async.Future<$0.NewConnectionResponse> newConnection($grpc.ServiceCall call, $0.NewConnectionRequest request);
+  $async.Future<$0.NewSessionResponse> newSession($grpc.ServiceCall call, $0.NewSessionRequest request);
+  $async.Future<$0.GenKeysResponse> genKeys($grpc.ServiceCall call, $0.GenKeysRequest request);
+  $async.Future<$0.PublicKey> getPublicKey($grpc.ServiceCall call, $0.GetKeyRequest request);
+  $async.Stream<$0.Msg> openChannel($grpc.ServiceCall call, $async.Stream<$0.Msg> request);
+  $async.Future<$0.SettingCheckResponse> checkSettingsValidity($grpc.ServiceCall call, $0.SettingCheckRequest request);
+  $async.Future<$0.CoordinatorStartResponse> startCoordinator($grpc.ServiceCall call, $0.CoordinatorStartRequest request);
+  $async.Future<$0.LocalPortForwardResponse> localPortForward($grpc.ServiceCall call, $0.SessionData request);
+  $async.Future<$0.NatFilterResponse> getNatFilterType($grpc.ServiceCall call, $0.NatFilterRequest request);
+  $async.Future<$0.SftpRequestResponse> openSftpChannel($grpc.ServiceCall call, $0.SessionData request);
+  $async.Future<$0.FileList> listDirectory($grpc.ServiceCall call, $0.Path request);
+  $async.Stream<$0.FileTransferStatus> fileDownload($grpc.ServiceCall call, $0.FileTransferRequest request);
+  $async.Stream<$0.FileTransferStatus> fileUpload($grpc.ServiceCall call, $0.FileTransferRequest request);
+  $async.Future<$0.Settings> getSettings($grpc.ServiceCall call, $0.SettingsRequest request);
+  $async.Future<$0.UserData> getSaveData($grpc.ServiceCall call, $0.GetSaveDataRequest request);
+  $async.Future<$0.Settings> saveSettings($grpc.ServiceCall call, $0.Settings request);
+  $async.Future<$0.UserData> saveUserData($grpc.ServiceCall call, $0.UserData request);
+  $async.Future<$0.SessionMap> getActiveSessions($grpc.ServiceCall call, $0.SessionRequest request);
+}
+@$pb.GrpcServiceName('clientipc.ClientEventService')
+class ClientEventServiceClient extends $grpc.Client {
+  static final _$subscribe = $grpc.ClientMethod<$0.SubscribeRequest, $0.ClientEvent>(
+      '/clientipc.ClientEventService/Subscribe',
+      ($0.SubscribeRequest value) => value.writeToBuffer(),
+      ($core.List<$core.int> value) => $0.ClientEvent.fromBuffer(value));
+
+  ClientEventServiceClient($grpc.ClientChannel channel,
+      {$grpc.CallOptions? options,
+      $core.Iterable<$grpc.ClientInterceptor>? interceptors})
+      : super(channel, options: options,
+        interceptors: interceptors);
+
+  $grpc.ResponseStream<$0.ClientEvent> subscribe($0.SubscribeRequest request, {$grpc.CallOptions? options}) {
+    return $createStreamingCall(_$subscribe, $async.Stream.fromIterable([request]), options: options);
+  }
+}
+
+@$pb.GrpcServiceName('clientipc.ClientEventService')
+abstract class ClientEventServiceBase extends $grpc.Service {
+  $core.String get $name => 'clientipc.ClientEventService';
+
+  ClientEventServiceBase() {
+    $addMethod($grpc.ServiceMethod<$0.SubscribeRequest, $0.ClientEvent>(
+        'Subscribe',
+        subscribe_Pre,
+        false,
+        true,
+        ($core.List<$core.int> value) => $0.SubscribeRequest.fromBuffer(value),
+        ($0.ClientEvent value) => value.writeToBuffer()));
+  }
+
+  $async.Stream<$0.ClientEvent> subscribe_Pre($grpc.ServiceCall call, $async.Future<$0.SubscribeRequest> request) async* {
+    yield* subscribe(call, await request);
+  }
+
+  $async.Stream<$0.ClientEvent> subscribe($grpc.ServiceCall call, $0.SubscribeRequest request);
 }

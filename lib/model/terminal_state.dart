@@ -7,5 +7,5 @@ import 'package:xterm/xterm.dart';
 class SessioTerminalState with ChangeNotifier {
   final Terminal terminal = Terminal(maxLines: 10000);
   final TerminalController terminalController = TerminalController();
-  final StreamController<Msg> streamController = StreamController();
+  late StreamController<Msg> streamController;
 }

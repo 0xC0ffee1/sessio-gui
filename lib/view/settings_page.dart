@@ -5,12 +5,18 @@ import 'package:sessio_ui/grpc_service.dart';
 import 'package:sessio_ui/src/generated/client_ipc.pbgrpc.dart';
 
 class SettingsPage extends StatefulWidget {
+  final String? caption;
+  final VoidCallback? onSubmit;
+
+  SettingsPage({this.caption, this.onSubmit});
+
   @override
   _SettingsPageState createState() => _SettingsPageState();
 }
 
 class _SettingsPageState extends State<SettingsPage> {
   late Future<Settings> _settingsFuture;
+  final _formKey = GlobalKey<FormState>();
   final TextEditingController _urlController = TextEditingController();
   final TextEditingController _deviceIdController = TextEditingController();
   late GrpcService _grpcService;
@@ -39,37 +45,39 @@ class _SettingsPageState extends State<SettingsPage> {
   }
 
   Future<void> _saveSettings() async {
-    final newSettings = Settings(
-      coordinatorUrl: _urlController.text,
-      deviceId: _deviceIdController.text,
-    );
+    if (_formKey.currentState?.validate() ?? false) {
+      final newSettings = Settings(
+        coordinatorUrl: _urlController.text,
+        deviceId: _deviceIdController.text,
+      );
 
-    try {
-      await Provider.of<GrpcService>(context, listen: false)
-          .client
-          .saveSettings(newSettings);
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(
-          content: Text('Settings saved successfully'),
-          behavior: SnackBarBehavior.floating,
-          backgroundColor: Theme.of(context).colorScheme.primary,
-          duration: Duration(seconds: 1),
-        ),
-      );
-    } catch (e) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(
-          content: Text('Failed to save settings: $e'),
-          behavior: SnackBarBehavior.floating,
-          backgroundColor: Theme.of(context).colorScheme.error,
-          duration: Duration(seconds: 1),
-        ),
-      );
+      try {
+        await _grpcService.client.saveSettings(newSettings);
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text('Settings saved successfully'),
+            behavior: SnackBarBehavior.floating,
+            backgroundColor: Theme.of(context).colorScheme.primary,
+            duration: Duration(seconds: 1),
+          ),
+        );
+        if (widget.onSubmit != null) {
+          widget.onSubmit!();
+        }
+      } catch (e) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text('Failed to save settings: $e'),
+            behavior: SnackBarBehavior.floating,
+            backgroundColor: Theme.of(context).colorScheme.error,
+            duration: Duration(seconds: 1),
+          ),
+        );
+      }
     }
   }
 
   void _generateKeyPair() async {
-    // Replace this with your actual key generation logic
     await _grpcService.client.genKeys(GenKeysRequest());
     final newKey =
         (await _grpcService.client.getPublicKey(GetKeyRequest())).key;
@@ -89,7 +97,7 @@ class _SettingsPageState extends State<SettingsPage> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text('Settings'),
+        title: Text(widget.caption ?? 'Settings'),
       ),
       body: FutureBuilder<Settings>(
         future: _settingsFuture,
@@ -101,62 +109,77 @@ class _SettingsPageState extends State<SettingsPage> {
           } else if (!snapshot.hasData) {
             return Center(child: Text('No data found.'));
           } else {
-            return ListView(
-              padding: EdgeInsets.all(16.0), // Add padding for better layout
-              children: [
-                ListTile(
-                  leading: Icon(Icons.public),
-                  title: Text('Coordinator URL'),
-                  subtitle: TextField(
-                    decoration: InputDecoration(
-                      border: OutlineInputBorder(),
-                      hintText: 'Enter your coordinator URL',
+            return Form(
+              key: _formKey,
+              child: ListView(
+                padding: EdgeInsets.all(16.0),
+                children: [
+                  ListTile(
+                    leading: Icon(Icons.public),
+                    title: Text('Coordinator URL'),
+                    subtitle: TextFormField(
+                      controller: _urlController,
+                      decoration: InputDecoration(
+                        border: OutlineInputBorder(),
+                        hintText: 'Enter your coordinator URL',
+                      ),
+                      validator: (value) {
+                        if (value == null || value.isEmpty) {
+                          return 'Please enter a Coordinator URL';
+                        }
+                        return null;
+                      },
                     ),
-                    controller: _urlController,
                   ),
-                ),
-                SizedBox(height: 16.0), // Add space between fields
-                ListTile(
-                  leading: Icon(Icons.perm_identity),
-                  title: Text('Device ID'),
-                  subtitle: TextField(
-                    decoration: InputDecoration(
-                      border: OutlineInputBorder(),
-                      hintText: 'Enter the ID of this device',
+                  SizedBox(height: 16.0),
+                  ListTile(
+                    leading: Icon(Icons.perm_identity),
+                    title: Text('Device ID'),
+                    subtitle: TextFormField(
+                      controller: _deviceIdController,
+                      decoration: InputDecoration(
+                        border: OutlineInputBorder(),
+                        hintText: 'Enter the ID of this device',
+                      ),
+                      validator: (value) {
+                        if (value == null || value.isEmpty) {
+                          return 'Please enter a Device ID';
+                        }
+                        return null;
+                      },
                     ),
-                    controller: _deviceIdController,
                   ),
-                ),
-                ListTile(
-                  leading: Icon(Icons.key),
-                  title: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Text('Public Key'),
-                      SizedBox(height: 8.0),
-                      TextField(
-                        controller: TextEditingController(text: publicKey),
-                        readOnly: true,
-                        decoration: InputDecoration(
-                          border: OutlineInputBorder(),
-                          hintText: 'No keys generated',
-                          suffixIcon: publicKey.isNotEmpty
-                              ? IconButton(
-                                  icon: Icon(Icons.copy),
-                                  onPressed: _copyToClipboard,
-                                )
-                              : null,
+                  ListTile(
+                    leading: Icon(Icons.key),
+                    title: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Text('Public Key'),
+                        SizedBox(height: 8.0),
+                        TextFormField(
+                          controller: TextEditingController(text: publicKey),
+                          readOnly: true,
+                          decoration: InputDecoration(
+                            border: OutlineInputBorder(),
+                            hintText: 'No keys generated',
+                            suffixIcon: publicKey.isNotEmpty
+                                ? IconButton(
+                                    icon: Icon(Icons.copy),
+                                    onPressed: _copyToClipboard,
+                                  )
+                                : null,
+                          ),
                         ),
-                      ),
-                      SizedBox(height: 8.0),
-                      ElevatedButton(
-                        onPressed: _generateKeyPair,
-                        child: Text('Generate new pair'),
-                      ),
-                    ],
-                  ),
-                )
-              ],
+                        SizedBox(height: 8.0),
+                        ElevatedButton(
+                          onPressed: _generateKeyPair,
+                          child: Text('Generate new pair'),
+                        ),
+                      ],
+                    ),
+                  )
+                ],
+              ),
             );
           }
         },

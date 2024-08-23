@@ -6,6 +6,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_background_service/flutter_background_service.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:sessio_ui/grpc_service.dart';
+import 'package:sessio_ui/model/session_manager.dart';
 import 'package:sessio_ui/model/sftp/browser.dart';
 import 'package:sessio_ui/model/sftp/sftp.dart';
 import 'package:sessio_ui/model/terminal_state.dart';
@@ -43,7 +44,7 @@ class NativeGrpcServer {
 @pragma('vm:entry-point')
 Future<void> onStart(ServiceInstance service) async {
   Directory appDir = await getApplicationSupportDirectory();
-  startGrpcServer(appDir.path + "/sessio.socket");
+  startGrpcServer(appDir.path);
 }
 
 void startGrpcServer(String path) {
@@ -71,7 +72,9 @@ void main() async {
     MultiProvider(
       providers: [
         Provider<GrpcService>(create: (_) => GrpcService()),
-        ChangeNotifierProvider(create: (context) => SessioTerminalState()),
+        ChangeNotifierProvider<SessionManager>(
+          create: (_) => SessionManager(),
+        ),
       ],
       child: const MyApp(),
     ),

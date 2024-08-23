@@ -2,23 +2,35 @@ import 'dart:io';
 
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:provider/provider.dart';
+import 'package:sessio_ui/grpc_service.dart';
 import 'package:sessio_ui/main.dart';
 import 'package:sessio_ui/model/terminal_state.dart';
 import 'package:sessio_ui/src/generated/client_ipc.pbgrpc.dart';
 import 'package:sessio_ui/view/mobile_keyboard.dart';
 import 'package:xterm/xterm.dart';
 
-class TerminalSessionView extends StatefulWidget {
+import 'session_view.dart';
+
+class TerminalSessionView extends SessionView {
   final SessioTerminalState terminalState;
   final dynamic keyboard;
 
-  TerminalSessionView({required this.terminalState, required this.keyboard});
+  TerminalSessionView({required this.terminalState, required this.keyboard, required super.sessionId, required super.sessionData});
 
   @override
-  _TerminalSessionViewState createState() => _TerminalSessionViewState();
+  _TerminalSessionViewState createState() {
+    print("STATE CREATED!");
+    return _TerminalSessionViewState();
+  }
+  
+  @override
+  Future<void> connect(BuildContext context) async {
+    Provider.of<GrpcService>(context, listen: false).connectPTY(terminalState, sessionId);
+  }
 }
 
-class _TerminalSessionViewState extends State<TerminalSessionView> {
+class _TerminalSessionViewState extends SessionViewState<TerminalSessionView> {
   bool _showVirtualKeyboard = false;
   final FocusNode focusNode = FocusNode();
 
@@ -34,7 +46,7 @@ class _TerminalSessionViewState extends State<TerminalSessionView> {
 
   //@TODO Maybe wrap some invisible text field over the terminalview to capture and forward keystrokes on android
   @override
-  Widget build(BuildContext context) {
+  Widget buildSessionView(BuildContext context) {
     final terminal = widget.terminalState.terminal;
     final terminalController = widget.terminalState.terminalController;
     final theme = Theme.of(context);

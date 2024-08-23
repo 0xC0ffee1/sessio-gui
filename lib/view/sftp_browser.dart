@@ -4,8 +4,11 @@ import 'dart:typed_data';
 import 'package:file_picker/file_picker.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+import 'package:sessio_ui/grpc_service.dart';
 import 'package:sessio_ui/model/sftp/browser.dart';
 import 'package:material_symbols_icons/symbols.dart';
+
+import 'session_view.dart';
 
 class FileTransferOverlay extends StatefulWidget {
   final int fileSize;
@@ -106,21 +109,27 @@ class _FileTransferOverlayState extends State<FileTransferOverlay> {
   }
 }
 
-class FileBrowserView extends StatefulWidget {
+class FileBrowserView extends SessionView {
   final FileBrowser _browser;
 
-  const FileBrowserView({
-    Key? key,
-    required FileBrowser browser,
-  })  : _browser = browser,
-        super(key: key);
+  FileBrowserView({
+    required FileBrowser browser, required super.sessionId, required super.sessionData,
+  })  : _browser = browser;
 
   @override
-  _FileBrowserViewState createState() => _FileBrowserViewState();
+  _FileBrowserViewState createState() {
+    return _FileBrowserViewState();
+  }
+  
+  @override
+  Future<void> connect(BuildContext context) async {
+    //Provider.of<GrpcService>(context, listen: false).connectSFTP(terminalState, sessionId);
+  }
 }
 
-class _FileBrowserViewState extends State<FileBrowserView>
+class _FileBrowserViewState extends SessionViewState<FileBrowserView>
     with AutomaticKeepAliveClientMixin {
+
   void _startFileTransfer(int fileSize, Stream<TransferStatus> transferStream) {
     setState(() {
       widget._browser.setCurrentTransferData(
@@ -138,7 +147,7 @@ class _FileBrowserViewState extends State<FileBrowserView>
   bool get wantKeepAlive => true;
 
   @override
-  Widget build(BuildContext context) {
+  Widget buildSessionView(BuildContext context) {
     super.build(context); // Ensure super.build is called
     return ChangeNotifierProvider<FileBrowser>.value(
       value: widget._browser,
