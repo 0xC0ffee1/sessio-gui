@@ -731,7 +731,24 @@ class _MyHomePageState extends State<MyHomePage> {
             return SettingsPage(
                 caption: "Initial Setup",
                 onSubmit: () {
-                  checkSettingsValidity();
+                  final future = checkSettingsValidity();
+                  future.then((_) {
+                    if (!_settingsValid) {
+                      ScaffoldMessenger.of(navigatorKey.currentContext!)
+                          .showSnackBar(
+                        SnackBar(
+                          content: Text(
+                              'Settings invalid or could not connect to coordinator server'),
+                          behavior: SnackBarBehavior.floating,
+                          backgroundColor:
+                              Theme.of(navigatorKey.currentContext!)
+                                  .colorScheme
+                                  .primary,
+                          duration: Duration(seconds: 1),
+                        ),
+                      );
+                    }
+                  });
                 });
           }
           return Scaffold(
