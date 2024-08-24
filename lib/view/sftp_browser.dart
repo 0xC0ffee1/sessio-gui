@@ -4,7 +4,6 @@ import 'dart:typed_data';
 import 'package:file_picker/file_picker.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-import 'package:sessio_ui/grpc_service.dart';
 import 'package:sessio_ui/model/sftp/browser.dart';
 import 'package:material_symbols_icons/symbols.dart';
 
@@ -44,12 +43,12 @@ class _FileTransferOverlayState extends State<FileTransferOverlay> {
                 stream: widget.transferStream,
                 builder: (context, snapshot) {
                   if (snapshot.connectionState == ConnectionState.waiting) {
-                    return Text('Initializing...');
+                    return const Text('Initializing...');
                   } else if (snapshot.hasError) {
                     return Text('Error: ${snapshot.error}');
                   } else if (!snapshot.hasData) {
                     widget.onCancel();
-                    return Text('Completed');
+                    return const Text('Completed');
                   } else {
                     final status = snapshot.data!;
                     final progress = status.bytesRead;
@@ -75,28 +74,28 @@ class _FileTransferOverlayState extends State<FileTransferOverlay> {
                       return Column(
                         mainAxisSize: MainAxisSize.min,
                         children: [
-                          Text('Transferring...'),
-                          SizedBox(height: 20),
+                          const Text('Transferring...'),
+                          const SizedBox(height: 20),
                           LinearProgressIndicator(
                             value: progress / widget.fileSize,
                           ),
-                          SizedBox(height: 20),
+                          const SizedBox(height: 20),
                           Text(
                               '${(progress / widget.fileSize * 100).toStringAsFixed(2)}% completed'),
-                          SizedBox(height: 10),
+                          const SizedBox(height: 10),
                           Text('Speed: ${speed.toStringAsFixed(2)} MB/s'),
-                          SizedBox(height: 20),
+                          const SizedBox(height: 20),
                           ElevatedButton(
                             onPressed: widget.onCancel,
-                            child: Text('Cancel'),
+                            child: const Text('Cancel'),
                           ),
                         ],
                       );
                     } else if (status.type == TransferStatusType.completed) {
                       widget.onCancel();
-                      return Text('Transfer completed');
+                      return const Text('Transfer completed');
                     } else {
-                      return Text('Unknown state');
+                      return const Text('Unknown state');
                     }
                   }
                 },
@@ -124,8 +123,7 @@ class FileBrowserView extends SessionView {
   }
 }
 
-class _FileBrowserViewState extends SessionViewState<FileBrowserView>
-    with AutomaticKeepAliveClientMixin {
+class _FileBrowserViewState extends SessionViewState<FileBrowserView> {
   void _startFileTransfer(int fileSize, Stream<TransferStatus> transferStream) {
     setState(() {
       widget._browser.setCurrentTransferData(
@@ -140,19 +138,15 @@ class _FileBrowserViewState extends SessionViewState<FileBrowserView>
   }
 
   @override
-  bool get wantKeepAlive => true;
-
-  @override
   Widget buildSessionView(BuildContext context) {
-    super.build(context); // Ensure super.build is called
     return ChangeNotifierProvider<FileBrowser>.value(
       value: widget._browser,
       child: Scaffold(
         appBar: AppBar(
-          title: Text('File Browser'),
+          title: const Text('File Browser'),
           actions: [
             IconButton(
-              icon: Icon(Icons.refresh),
+              icon: const Icon(Icons.refresh),
               onPressed: () {
                 widget._browser.refreshFileList();
               },
@@ -178,6 +172,30 @@ class _FileBrowserViewState extends SessionViewState<FileBrowserView>
                     widget._browser.getCurrentTransfer()!.transferStream,
                 onCancel: _cancelFileTransfer,
               ),
+            // Floating action button for bulk actions
+            Consumer<FileBrowser>(
+              builder: (context, browser, child) {
+                if (browser.selectedFiles.isNotEmpty) {
+                  return Align(
+                    alignment: Alignment.bottomLeft,
+                    child: Padding(
+                      padding: const EdgeInsets.all(16.0),
+                      child: FloatingActionButton.extended(
+                        onPressed: () {
+                          showModalBottomSheet(
+                            context: context,
+                            builder: (context) => BulkActionsSheet(browser),
+                          );
+                        },
+                        backgroundColor: Colors.pink,
+                        label: const Text("Bulk Actions"),
+                      ),
+                    ),
+                  );
+                }
+                return const SizedBox.shrink();
+              },
+            ),
           ],
         ),
         floatingActionButton: FloatingActionButton(
@@ -195,9 +213,40 @@ class _FileBrowserViewState extends SessionViewState<FileBrowserView>
               _startFileTransfer(fileSize, transferStream);
             }
           },
-          child: Icon(Icons.add),
+          child: const Icon(Icons.add),
         ),
       ),
+    );
+  }
+}
+
+class BulkActionsSheet extends StatelessWidget {
+  final FileBrowser browser;
+
+  BulkActionsSheet(this.browser);
+
+  @override
+  Widget build(BuildContext context) {
+    return Column(
+      mainAxisSize: MainAxisSize.min,
+      children: [
+        ListTile(
+          leading: const Icon(Icons.delete),
+          title: const Text('Delete Selected'),
+          onTap: () async {
+            Navigator.pop(context);
+            await browser.deleteSelectedFiles();
+          },
+        ),
+        ListTile(
+          leading: const Icon(Icons.deselect),
+          title: const Text('Deselect All'),
+          onTap: () {
+            Navigator.pop(context);
+            browser.clearSelection();
+          },
+        ),
+      ],
     );
   }
 }
@@ -213,7 +262,7 @@ class PathNavigator extends StatelessWidget {
       child: Row(
         children: [
           IconButton(
-            icon: Icon(Icons.arrow_upward),
+            icon: const Icon(Icons.arrow_upward),
             onPressed: () {
               browser.navigateUp();
             },
@@ -278,6 +327,44 @@ class FileListView extends StatelessWidget {
     }
   }
 
+  Future<void> _handleFileRename(
+      FileMeta file, BuildContext context, FileBrowser browser) async {
+    TextEditingController renameController =
+        TextEditingController(text: file.filename);
+
+    await showDialog<String>(
+      context: context,
+      builder: (BuildContext context) {
+        return AlertDialog(
+          title: const Text('Rename File'),
+          content: TextField(
+            controller: renameController,
+            decoration: const InputDecoration(hintText: "Enter new name"),
+          ),
+          actions: <Widget>[
+            TextButton(
+              child: const Text('Cancel'),
+              onPressed: () {
+                Navigator.of(context).pop();
+              },
+            ),
+            TextButton(
+              child: const Text('Rename'),
+              onPressed: () {
+                Navigator.of(context).pop(renameController.text);
+              },
+            ),
+          ],
+        );
+      },
+    ).then((newName) async {
+      if (newName != null && newName.isNotEmpty && newName != file.filename) {
+        await browser.renameFile(
+            file.path, "${browser.currentPath.join('/')}/$newName");
+      }
+    });
+  }
+
   @override
   Widget build(BuildContext context) {
     final browser = context.watch<FileBrowser>();
@@ -285,26 +372,30 @@ class FileListView extends StatelessWidget {
     final isLoading = browser.isLoading;
 
     if (isLoading) {
-      return Center(child: CircularProgressIndicator());
+      return const Center(child: CircularProgressIndicator());
     }
 
     if (files.isEmpty) {
-      return Center(child: Text('No files found.'));
+      return const Center(child: Text('No files found.'));
     }
 
     return ListView.builder(
       itemCount: files.length,
       itemBuilder: (context, index) {
         final file = files[index];
+        final isSelected = browser.isFileSelected(file);
+
         return ListTile(
           leading: Row(
             mainAxisSize: MainAxisSize.min,
             children: [
               Checkbox(
-                value: false,
-                onChanged: (bool? value) {},
+                value: isSelected,
+                onChanged: (bool? value) {
+                  browser.toggleFileSelection(file);
+                },
               ),
-              SizedBox(width: 10),
+              const SizedBox(width: 10),
               Icon(
                 file.isDir ? Icons.folder : Icons.insert_drive_file_outlined,
               ),
@@ -314,6 +405,7 @@ class FileListView extends StatelessWidget {
           subtitle: Text(file.isDir ? " " : file.byteSize.formatBytes()),
           onTap: () {
             if (file.isDir) {
+              browser.clearSelection();
               browser.navigateToDirectory(file.filename);
             } else {
               // Maybe open built in editor
@@ -325,13 +417,13 @@ class FileListView extends StatelessWidget {
                   onSelected: (String result) async {
                     switch (result) {
                       case "download":
-                        _handleFileDownload(file, context, browser);
+                        await _handleFileDownload(file, context, browser);
                         break;
                       case "delete":
-                        // Handle delete
+                        await browser.deleteSelectedFiles();
                         break;
                       case "rename":
-                        // Handle rename
+                        await _handleFileRename(file, context, browser);
                         break;
                     }
                   },

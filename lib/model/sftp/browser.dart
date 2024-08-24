@@ -1,22 +1,39 @@
 import 'dart:io';
 
 import 'package:flutter/material.dart';
+import 'package:sessio_ui/src/generated/client_ipc.pbgrpc.dart';
 
 abstract class FileBrowser with ChangeNotifier {
   List<String> get currentPath;
   List<FileMeta> get currentFiles;
-  Future<List<FileMeta>> refreshFileList();
   bool get isLoading;
 
-  void setCurrentPath(List<String> path);
-  Stream<TransferStatus> addFile(String filePath, String fileName);
-  Stream<TransferStatus> copyFile(String filePath, String dest);
+  // Navigation methods
   Future<void> navigateToDirectory(String directory);
   Future<void> navigateUp();
+  Future<void> setCurrentPath(List<String> path);
+  Future<List<FileMeta>> refreshFileList();
 
+  // File operations
+  Stream<TransferStatus> addFile(String localPath, String fileName);
+  Stream<TransferStatus> copyFile(String filePath, String dest);
+
+  // Transfer-related methods
   void setCurrentTransferData(TransferData data);
   TransferData? getCurrentTransfer();
   void setTransferCancelled();
+
+  // Bulk selection methods
+  List<FileMeta> get selectedFiles;
+  void toggleFileSelection(FileMeta file);
+  void clearSelection();
+  void selectAllFiles();
+  void deselectAllFiles();
+  bool isFileSelected(FileMeta file);
+
+  // Bulk operations
+  Future<void> deleteSelectedFiles();
+  Future<void> renameFile(String oldPath, String newPath);
 }
 
 enum TransferStatusType {
@@ -44,24 +61,23 @@ class TransferStatus {
   int getBytesRead() => bytesRead;
 }
 
-//Java moment
 class FileMeta {
   final String filename;
   final String path;
   final int byteSize;
   final bool isDir;
 
-  FileMeta(
-      {required this.filename,
-      required this.path,
-      required this.byteSize,
-      required this.isDir});
+  FileMeta({
+    required this.filename,
+    required this.path,
+    required this.byteSize,
+    required this.isDir,
+  });
 
   String getFilename() => filename;
   String getPath() => path;
   int getByteSize() => byteSize;
 
-  // Override the == operator to compare objects by value
   @override
   bool operator ==(Object other) =>
       identical(this, other) ||
@@ -72,12 +88,10 @@ class FileMeta {
           byteSize == other.byteSize &&
           isDir == other.isDir;
 
-  // Override the hashCode method
   @override
   int get hashCode =>
       filename.hashCode ^ path.hashCode ^ byteSize.hashCode ^ isDir.hashCode;
 
-  // Optionally, you can override the toString method for better debug output
   @override
   String toString() {
     return 'FileMeta{filename: $filename, path: $path, byteSize: $byteSize, dir: $isDir}';
