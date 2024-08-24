@@ -24,14 +24,7 @@ class TerminalSessionView extends SessionView {
 
   @override
   _TerminalSessionViewState createState() {
-    print("STATE CREATED!");
     return _TerminalSessionViewState();
-  }
-
-  @override
-  Future<void> connect(BuildContext context) async {
-    Provider.of<GrpcService>(context, listen: false)
-        .connectPTY(terminalState, sessionId);
   }
 }
 

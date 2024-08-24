@@ -456,6 +456,8 @@ class _MyHomePageState extends State<MyHomePage> {
         sessionData: data,
       );
     });
+    Provider.of<SessionManager>(context, listen: false)
+        .createSession(context, data, null);
   }
 
   Future<void> _addNewSession(
@@ -491,7 +493,6 @@ class _MyHomePageState extends State<MyHomePage> {
     );
 
     if (type == "PTY") {
-      print("added session 2!");
       final sessionState = SessioTerminalState();
       final keyboard = VirtualKeyboard(defaultInputHandler);
       sessionState.terminal.inputHandler = keyboard;
@@ -513,11 +514,8 @@ class _MyHomePageState extends State<MyHomePage> {
         );
       });
 
-      print("added session 2.1");
-
       Provider.of<SessionManager>(context, listen: false)
           .createSession(context, data, sessionState);
-      print("added session 3!");
     } else if (type == "SFTP") {
       final data = SessionData(
           sessionId: sessionId,
@@ -537,6 +535,9 @@ class _MyHomePageState extends State<MyHomePage> {
           sessionData: data,
         );
       });
+
+      Provider.of<SessionManager>(context, listen: false)
+          .createSession(context, data, null);
     }
   }
 

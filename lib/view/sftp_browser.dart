@@ -122,11 +122,6 @@ class FileBrowserView extends SessionView {
   _FileBrowserViewState createState() {
     return _FileBrowserViewState();
   }
-
-  @override
-  Future<void> connect(BuildContext context) async {
-    //Provider.of<GrpcService>(context, listen: false).connectSFTP(terminalState, sessionId);
-  }
 }
 
 class _FileBrowserViewState extends SessionViewState<FileBrowserView>
