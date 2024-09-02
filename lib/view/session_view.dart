@@ -100,12 +100,12 @@ abstract class SessionViewState<T extends SessionView> extends State<T> {
                         TextButton(
                           onPressed: () {
                             setState(() {
+                              print("reconnecting!");
                               Provider.of<SessionManager>(context,
                                       listen: false)
                                   .reconnectSession(context, widget.sessionId);
                               _showLocalDialog = false;
                             });
-                            // Optionally, you might want to reconnect or take other action here
                           },
                           child: Text('Reconnect'),
                         ),

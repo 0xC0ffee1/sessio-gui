@@ -321,7 +321,8 @@ class FileListView extends StatelessWidget {
     if (outputFile != null) {
       int fileSize = file.byteSize;
 
-      final transferStream = browser.copyFile(file.path, outputFile);
+      print("downloading file " + file.filename);
+      final transferStream = browser.copyFile(file.filename, outputFile);
 
       onFileTransferStart(fileSize, transferStream);
     }

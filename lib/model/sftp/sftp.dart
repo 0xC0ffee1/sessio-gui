@@ -27,11 +27,16 @@ class SftpBrowser extends FileBrowser {
   }
 
   @override
-  Stream<TransferStatus> copyFile(String filePath, String dest) {
+  Stream<TransferStatus> copyFile(String fileName, String dest) {
+    final remotePath =
+        _currentPath.isEmpty ? fileName : "${_currentPath.join('/')}/$fileName";
+
+    print(remotePath);
+
     final responseStream = _client.fileDownload(FileTransferRequest(
       sessionId: _sessionId,
       localPath: dest,
-      remotePath: filePath,
+      remotePath: remotePath,
     ));
 
     return _createTransferStream(responseStream);

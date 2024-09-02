@@ -19,12 +19,6 @@ class PortForwardView extends SessionView {
 
   @override
   _PortForwardViewState createState() => _PortForwardViewState();
-
-  @override
-  Future<void> connect(BuildContext context) {
-    // TODO: implement connect
-    throw UnimplementedError();
-  }
 }
 
 class _PortForwardViewState extends SessionViewState<PortForwardView> {

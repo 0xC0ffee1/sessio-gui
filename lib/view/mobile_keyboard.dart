@@ -1,22 +1,21 @@
 import 'package:flutter/material.dart';
 import 'package:xterm/xterm.dart';
-
 import 'dart:math' as math;
 
 @immutable
 class ExpandableFab extends StatefulWidget {
   const ExpandableFab({
     super.key,
+    required this.terminalState,
     this.keyboard,
     this.initialOpen,
     required this.distance,
-    required this.children,
   });
 
+  final Terminal terminalState; // Added TerminalState
   final VirtualKeyboard? keyboard;
   final bool? initialOpen;
   final double distance;
-  final List<Widget> children;
 
   @override
   State<ExpandableFab> createState() => _ExpandableFabState();
@@ -103,22 +102,81 @@ class _ExpandableFabState extends State<ExpandableFab>
   }
 
   List<Widget> _buildExpandingActionButtons() {
-    final children = <Widget>[];
-    final count = widget.children.length;
+    final buttons = <Widget>[
+      // Ctrl button
+      ActionButton(
+        onPressed: () =>
+            setState(() => widget.keyboard?.ctrl = !widget.keyboard!.ctrl),
+        icon: const Text('Ctrl', style: TextStyle(color: Colors.black)),
+        active: widget.keyboard?.ctrl ?? false,
+      ),
+      // Alt button
+      ActionButton(
+        onPressed: () =>
+            setState(() => widget.keyboard?.alt = !widget.keyboard!.alt),
+        icon: const Text('Alt', style: TextStyle(color: Colors.black)),
+        active: widget.keyboard?.alt ?? false,
+      ),
+      // Shift button
+      ActionButton(
+        onPressed: () =>
+            setState(() => widget.keyboard?.shift = !widget.keyboard!.shift),
+        icon: const Text('Shift', style: TextStyle(color: Colors.black)),
+        active: widget.keyboard?.shift ?? false,
+      ),
+      // ESC key
+      ActionButton(
+        icon: const Text('Esc', style: TextStyle(color: Colors.black)),
+        onPressed: () {
+          widget.terminalState.keyInput(TerminalKey.escape);
+        },
+      ),
+      // Arrow Up key
+      ActionButton(
+        icon: Icon(
+          Icons.arrow_upward,
+          color: Colors.black,
+        ),
+        onPressed: () {
+          widget.terminalState.keyInput(TerminalKey.arrowUp);
+        },
+      ),
+      // Arrow Down key
+      ActionButton(
+        icon: Icon(Icons.arrow_downward, color: Colors.black),
+        onPressed: () {
+          widget.terminalState.keyInput(TerminalKey.arrowDown);
+        },
+      ),
+      // Arrow Left key
+      ActionButton(
+        icon: Icon(Icons.arrow_back, color: Colors.black),
+        onPressed: () {
+          widget.terminalState.keyInput(TerminalKey.arrowLeft);
+        },
+      ),
+      // Arrow Right key
+      ActionButton(
+        icon: Icon(Icons.arrow_forward, color: Colors.black),
+        onPressed: () {
+          widget.terminalState.keyInput(TerminalKey.arrowRight);
+        },
+      ),
+    ];
+
+    final count = buttons.length;
     final step = 90.0 / (count - 1);
     for (var i = 0, angleInDegrees = 0.0;
         i < count;
         i++, angleInDegrees += step) {
-      children.add(
-        _ExpandingActionButton(
-          directionInDegrees: angleInDegrees,
-          maxDistance: widget.distance,
-          progress: _expandAnimation,
-          child: widget.children[i],
-        ),
+      buttons[i] = _ExpandingActionButton(
+        directionInDegrees: angleInDegrees,
+        maxDistance: widget.distance,
+        progress: _expandAnimation,
+        child: buttons[i],
       );
     }
-    return children;
+    return buttons;
   }
 
   Widget _buildTapToOpenFab() {
@@ -232,6 +290,10 @@ class VirtualKeyboard extends TerminalInputHandler with ChangeNotifier {
       _ctrl = value;
       notifyListeners();
     }
+  }
+
+  void newEvent(TerminalKeyboardEvent event) {
+    this._inputHandler.call(event);
   }
 
   bool _shift = false;

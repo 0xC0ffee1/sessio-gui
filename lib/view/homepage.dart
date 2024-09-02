@@ -42,13 +42,13 @@ class MyHomePage extends StatefulWidget {
 
 class _MyHomePageState extends State<MyHomePage> {
   //Session id is the key
-  HashMap<String, SessionView> sessionViews = HashMap();
+  LinkedHashMap<String, SessionView> sessionViews = LinkedHashMap();
   int _selectedRailIndex = 0;
   int _selectedSessionIndex = 0;
   bool _isDrawerOpen = true; // New state variable to track drawer state
   final PageController _pageController = PageController();
 
-  Map<String, List<Widget>> sessionTree = {};
+  LinkedHashMap<String, List<Widget>> sessionTree = LinkedHashMap();
 
   Timer? _healthTimer;
   bool _isDaemonErrorOpen = false;
@@ -83,8 +83,8 @@ class _MyHomePageState extends State<MyHomePage> {
   }
 
   void resetSessions() {
-    sessionViews = HashMap();
-    sessionTree = HashMap();
+    sessionViews = LinkedHashMap();
+    sessionTree = LinkedHashMap();
   }
 
   void _checkDaemonHealth(Timer? timer) async {
@@ -191,14 +191,14 @@ class _MyHomePageState extends State<MyHomePage> {
       var clientId = sessionData.deviceId;
 
       if (sessionData.hasPty()) {
-        await _addNewSession(
+        _addNewSession(
             clientId, sessionData.username, 'PTY', sessionData.sessionId);
       } else if (sessionData.hasSftp()) {
-        await _addNewSession(
+        _addNewSession(
             clientId, sessionData.username, 'SFTP', sessionData.sessionId);
       } else if (sessionData.hasLpf()) {
         var lpf = sessionData.lpf;
-        await _addLocalPFSession(
+        _addLocalPFSession(
             clientId,
             sessionData.username,
             lpf.localHost,
@@ -436,12 +436,28 @@ class _MyHomePageState extends State<MyHomePage> {
     if (!sessionTree.containsKey(clientId)) {
       sessionTree[clientId] = [];
     }
+    int currentIndex = sessionTree[clientId]!.length;
     sessionTree[clientId]!.add(
       Row(
         children: [
           Icon(Symbols.valve),
           SizedBox(width: 8),
           Text("L-PF"),
+          Spacer(),
+          IconButton(
+              onPressed: () {
+                if (sessionId != null) {
+                  Provider.of<GrpcService>(context, listen: false)
+                      .deleteSessionSave(sessionId);
+                }
+                setState(() {
+                  sessionTree[clientId]!.removeAt(currentIndex);
+                  if (sessionTree[clientId]!.isEmpty) {
+                    sessionTree.remove(clientId);
+                  }
+                });
+              },
+              icon: Icon(Icons.delete))
         ],
       ),
     );
@@ -494,6 +510,7 @@ class _MyHomePageState extends State<MyHomePage> {
 
     if (type == "PTY") {
       final sessionState = SessioTerminalState();
+
       final keyboard = VirtualKeyboard(defaultInputHandler);
       sessionState.terminal.inputHandler = keyboard;
 

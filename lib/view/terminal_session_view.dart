@@ -38,10 +38,6 @@ class _TerminalSessionViewState extends SessionViewState<TerminalSessionView> {
     });
   }
 
-  void _handleKeyEvent(KeyEvent event) {
-    if (!Platform.isAndroid) return;
-  }
-
   //@TODO Maybe wrap some invisible text field over the terminalview to capture and forward keystrokes on android
   @override
   Widget buildSessionView(BuildContext context) {
@@ -111,32 +107,9 @@ class _TerminalSessionViewState extends SessionViewState<TerminalSessionView> {
               Platform.isAndroid ||
               Platform.isIOS) {
             return ExpandableFab(
-              distance: 112,
-              keyboard: widget.keyboard,
-              children: [
-                ActionButton(
-                  onPressed: () => setState(
-                      () => widget.keyboard.ctrl = !widget.keyboard.ctrl),
-                  icon:
-                      const Text('Ctrl', style: TextStyle(color: Colors.black)),
-                  active: widget.keyboard.ctrl,
-                ),
-                ActionButton(
-                  onPressed: () => setState(
-                      () => widget.keyboard.alt = !widget.keyboard.alt),
-                  icon:
-                      const Text('Alt', style: TextStyle(color: Colors.black)),
-                  active: widget.keyboard.alt,
-                ),
-                ActionButton(
-                  onPressed: () => setState(
-                      () => widget.keyboard.shift = !widget.keyboard.shift),
-                  icon: const Text('Shift',
-                      style: TextStyle(color: Colors.black)),
-                  active: widget.keyboard.shift,
-                ),
-              ],
-            );
+                terminalState: terminal,
+                distance: 180,
+                keyboard: widget.keyboard);
           } else {
             return Container(); // Render nothing if the screen is larger than 600px
           }
