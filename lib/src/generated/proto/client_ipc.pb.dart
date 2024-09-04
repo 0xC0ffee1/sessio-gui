@@ -1,6 +1,6 @@
 //
 //  Generated code. Do not modify.
-//  source: client_ipc.proto
+//  source: proto/client_ipc.proto
 //
 // @dart = 2.12
 
@@ -17,6 +17,107 @@ import 'package:protobuf/protobuf.dart' as $pb;
 import 'client_ipc.pbenum.dart';
 
 export 'client_ipc.pbenum.dart';
+
+class SessionCloseRequest extends $pb.GeneratedMessage {
+  factory SessionCloseRequest({
+    $core.String? sessionId,
+  }) {
+    final $result = create();
+    if (sessionId != null) {
+      $result.sessionId = sessionId;
+    }
+    return $result;
+  }
+  SessionCloseRequest._() : super();
+  factory SessionCloseRequest.fromBuffer($core.List<$core.int> i, [$pb.ExtensionRegistry r = $pb.ExtensionRegistry.EMPTY]) => create()..mergeFromBuffer(i, r);
+  factory SessionCloseRequest.fromJson($core.String i, [$pb.ExtensionRegistry r = $pb.ExtensionRegistry.EMPTY]) => create()..mergeFromJson(i, r);
+
+  static final $pb.BuilderInfo _i = $pb.BuilderInfo(_omitMessageNames ? '' : 'SessionCloseRequest', package: const $pb.PackageName(_omitMessageNames ? '' : 'clientipc'), createEmptyInstance: create)
+    ..aOS(1, _omitFieldNames ? '' : 'sessionId')
+    ..hasRequiredFields = false
+  ;
+
+  @$core.Deprecated(
+  'Using this can add significant overhead to your binary. '
+  'Use [GeneratedMessageGenericExtensions.deepCopy] instead. '
+  'Will be removed in next major version')
+  SessionCloseRequest clone() => SessionCloseRequest()..mergeFromMessage(this);
+  @$core.Deprecated(
+  'Using this can add significant overhead to your binary. '
+  'Use [GeneratedMessageGenericExtensions.rebuild] instead. '
+  'Will be removed in next major version')
+  SessionCloseRequest copyWith(void Function(SessionCloseRequest) updates) => super.copyWith((message) => updates(message as SessionCloseRequest)) as SessionCloseRequest;
+
+  $pb.BuilderInfo get info_ => _i;
+
+  @$core.pragma('dart2js:noInline')
+  static SessionCloseRequest create() => SessionCloseRequest._();
+  SessionCloseRequest createEmptyInstance() => create();
+  static $pb.PbList<SessionCloseRequest> createRepeated() => $pb.PbList<SessionCloseRequest>();
+  @$core.pragma('dart2js:noInline')
+  static SessionCloseRequest getDefault() => _defaultInstance ??= $pb.GeneratedMessage.$_defaultFor<SessionCloseRequest>(create);
+  static SessionCloseRequest? _defaultInstance;
+
+  @$pb.TagNumber(1)
+  $core.String get sessionId => $_getSZ(0);
+  @$pb.TagNumber(1)
+  set sessionId($core.String v) { $_setString(0, v); }
+  @$pb.TagNumber(1)
+  $core.bool hasSessionId() => $_has(0);
+  @$pb.TagNumber(1)
+  void clearSessionId() => clearField(1);
+}
+
+class SessionCloseResponse extends $pb.GeneratedMessage {
+  factory SessionCloseResponse({
+    $core.bool? closed,
+  }) {
+    final $result = create();
+    if (closed != null) {
+      $result.closed = closed;
+    }
+    return $result;
+  }
+  SessionCloseResponse._() : super();
+  factory SessionCloseResponse.fromBuffer($core.List<$core.int> i, [$pb.ExtensionRegistry r = $pb.ExtensionRegistry.EMPTY]) => create()..mergeFromBuffer(i, r);
+  factory SessionCloseResponse.fromJson($core.String i, [$pb.ExtensionRegistry r = $pb.ExtensionRegistry.EMPTY]) => create()..mergeFromJson(i, r);
+
+  static final $pb.BuilderInfo _i = $pb.BuilderInfo(_omitMessageNames ? '' : 'SessionCloseResponse', package: const $pb.PackageName(_omitMessageNames ? '' : 'clientipc'), createEmptyInstance: create)
+    ..aOB(1, _omitFieldNames ? '' : 'closed')
+    ..hasRequiredFields = false
+  ;
+
+  @$core.Deprecated(
+  'Using this can add significant overhead to your binary. '
+  'Use [GeneratedMessageGenericExtensions.deepCopy] instead. '
+  'Will be removed in next major version')
+  SessionCloseResponse clone() => SessionCloseResponse()..mergeFromMessage(this);
+  @$core.Deprecated(
+  'Using this can add significant overhead to your binary. '
+  'Use [GeneratedMessageGenericExtensions.rebuild] instead. '
+  'Will be removed in next major version')
+  SessionCloseResponse copyWith(void Function(SessionCloseResponse) updates) => super.copyWith((message) => updates(message as SessionCloseResponse)) as SessionCloseResponse;
+
+  $pb.BuilderInfo get info_ => _i;
+
+  @$core.pragma('dart2js:noInline')
+  static SessionCloseResponse create() => SessionCloseResponse._();
+  SessionCloseResponse createEmptyInstance() => create();
+  static $pb.PbList<SessionCloseResponse> createRepeated() => $pb.PbList<SessionCloseResponse>();
+  @$core.pragma('dart2js:noInline')
+  static SessionCloseResponse getDefault() => _defaultInstance ??= $pb.GeneratedMessage.$_defaultFor<SessionCloseResponse>(create);
+  static SessionCloseResponse? _defaultInstance;
+
+  /// If it existed in the first place
+  @$pb.TagNumber(1)
+  $core.bool get closed => $_getBF(0);
+  @$pb.TagNumber(1)
+  set closed($core.bool v) { $_setBool(0, v); }
+  @$pb.TagNumber(1)
+  $core.bool hasClosed() => $_has(0);
+  @$pb.TagNumber(1)
+  void clearClosed() => clearField(1);
+}
 
 class FileDelData extends $pb.GeneratedMessage {
   factory FileDelData({

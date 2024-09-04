@@ -1,6 +1,7 @@
 import 'dart:async';
 import 'dart:collection';
 import 'dart:io';
+import 'dart:math';
 
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
@@ -17,7 +18,7 @@ import 'package:sessio_ui/model/session_manager.dart';
 import 'package:sessio_ui/model/session_state.dart';
 import 'package:sessio_ui/model/sftp/sftp.dart';
 import 'package:sessio_ui/model/terminal_state.dart';
-import 'package:sessio_ui/src/generated/client_ipc.pbgrpc.dart';
+import 'package:sessio_ui/src/generated/proto/client_ipc.pbgrpc.dart';
 import 'package:sessio_ui/view/mobile_keyboard.dart';
 import 'package:sessio_ui/view/portforward_view.dart';
 import 'package:sessio_ui/view/session_view.dart';
@@ -44,11 +45,8 @@ class _MyHomePageState extends State<MyHomePage> {
   //Session id is the key
   LinkedHashMap<String, SessionView> sessionViews = LinkedHashMap();
   int _selectedRailIndex = 0;
-  int _selectedSessionIndex = 0;
   bool _isDrawerOpen = true; // New state variable to track drawer state
   final PageController _pageController = PageController();
-
-  LinkedHashMap<String, List<Widget>> sessionTree = LinkedHashMap();
 
   Timer? _healthTimer;
   bool _isDaemonErrorOpen = false;
@@ -84,7 +82,6 @@ class _MyHomePageState extends State<MyHomePage> {
 
   void resetSessions() {
     sessionViews = LinkedHashMap();
-    sessionTree = LinkedHashMap();
   }
 
   void _checkDaemonHealth(Timer? timer) async {
@@ -433,35 +430,6 @@ class _MyHomePageState extends State<MyHomePage> {
     Provider.of<GrpcService>(context, listen: false)
         .connectLPF(data, sessionIdActual);
 
-    if (!sessionTree.containsKey(clientId)) {
-      sessionTree[clientId] = [];
-    }
-    int currentIndex = sessionTree[clientId]!.length;
-    sessionTree[clientId]!.add(
-      Row(
-        children: [
-          Icon(Symbols.valve),
-          SizedBox(width: 8),
-          Text("L-PF"),
-          Spacer(),
-          IconButton(
-              onPressed: () {
-                if (sessionId != null) {
-                  Provider.of<GrpcService>(context, listen: false)
-                      .deleteSessionSave(sessionId);
-                }
-                setState(() {
-                  sessionTree[clientId]!.removeAt(currentIndex);
-                  if (sessionTree[clientId]!.isEmpty) {
-                    sessionTree.remove(clientId);
-                  }
-                });
-              },
-              icon: Icon(Icons.delete))
-        ],
-      ),
-    );
-
     setState(() {
       sessionViews[sessionIdActual] = PortForwardView(
         localAddress: hostLocal,
@@ -478,35 +446,7 @@ class _MyHomePageState extends State<MyHomePage> {
 
   Future<void> _addNewSession(
       String clientId, String username, String type, String? sessionId) async {
-    if (!sessionTree.containsKey(clientId)) {
-      sessionTree[clientId] = [];
-    }
     GrpcService service = Provider.of<GrpcService>(context, listen: false);
-    int currentIndex = sessionTree[clientId]!.length;
-    sessionTree[clientId]!.add(
-      Row(
-        children: [
-          Icon(type == "PTY" ? Icons.terminal : Icons.folder_open),
-          SizedBox(width: 8),
-          Text(type),
-          Spacer(),
-          IconButton(
-              onPressed: () {
-                if (sessionId != null) {
-                  Provider.of<GrpcService>(context, listen: false)
-                      .deleteSessionSave(sessionId);
-                }
-                setState(() {
-                  sessionTree[clientId]!.removeAt(currentIndex);
-                  if (sessionTree[clientId]!.isEmpty) {
-                    sessionTree.remove(clientId);
-                  }
-                });
-              },
-              icon: Icon(Icons.delete))
-        ],
-      ),
-    );
 
     if (type == "PTY") {
       final sessionState = SessioTerminalState();
@@ -603,64 +543,126 @@ class _MyHomePageState extends State<MyHomePage> {
     ]);
   }
 
-  Widget _buildSessionListView() {
-    int offset = 0;
-    return ListView(
-      padding: EdgeInsets.zero, // Remove any padding
-      children: [
-        Padding(
-          padding: const EdgeInsets.all(8.0),
-          child: Column(children: [
-            SizedBox(height: 20),
+  void handleSessionRemove(String sessionId, SessionManager manager) {
+    showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return AlertDialog(
+          title: Text('Confirm Deletion'),
+          content: Text('Are you sure you want to remove this session?'),
+          actions: [
             TextButton(
-              onPressed: () async {
-                await _showClientIdDialog();
+              onPressed: () {
+                Navigator.of(context).pop(); // Close the dialog
               },
-              child: Row(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: [
-                    Icon(Icons.add),
-                    SizedBox(width: 10),
-                    Text('New Session')
-                  ]),
-            )
-          ]),
-        ),
-        ...sessionTree.keys.map((parent) {
-          final tile = ExpansionTile(
-            shape: Border(),
-            title: Row(children: [
-              _buildConnStatus(parent),
-              SizedBox(width: 8),
-              Text(
-                parent,
+              child: Text('Cancel'),
+            ),
+            TextButton(
+              onPressed: () {
+                Navigator.of(context).pop();
+                manager.removeSession(context, sessionId);
+              },
+              child: Text('Confirm'),
+            ),
+          ],
+        );
+      },
+    );
+  }
+
+  Widget _buildSessionListView() {
+    return Consumer<SessionManager>(builder: (context, sessionManager, child) {
+      final deviceSessions = sessionManager.allDeviceSessions;
+
+      return ListView(
+        padding: EdgeInsets.zero, // Remove any padding
+        children: [
+          Padding(
+            padding: const EdgeInsets.all(8.0),
+            child: Column(children: [
+              SizedBox(height: 20),
+              TextButton(
+                onPressed: () async {
+                  await _showClientIdDialog();
+                },
+                child: Row(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      Icon(Icons.add),
+                      SizedBox(width: 10),
+                      Text('New Session')
+                    ]),
               )
             ]),
-            children: sessionTree[parent]!.asMap().entries.map((entry) {
-              int index = entry.key + offset;
-              Widget session = entry.value;
-              return Padding(
-                padding: const EdgeInsets.only(left: 16.0),
-                child: ListTile(
-                  title: session,
-                  selected: _selectedSessionIndex - 2 == index,
-                  selectedColor: Colors.pink,
-                  onTap: () {
-                    setState(() {
-                      _selectedSessionIndex =
-                          index + 2; // Ensure session indices start from 2
-                      print("Setting index to ${_selectedSessionIndex}");
-                    });
-                  },
-                ),
-              );
-            }).toList(),
-          );
-          offset += sessionTree[parent]!.length;
-          return tile;
-        }).toList(),
-      ],
-    );
+          ),
+          ...deviceSessions.keys.map((parent) {
+            final tile = ExpansionTile(
+              shape: Border(),
+              title: Row(children: [
+                _buildConnStatus(parent),
+                SizedBox(width: 8),
+                Text(
+                  parent,
+                )
+              ]),
+              children: deviceSessions[parent]!.asMap().entries.map((entry) {
+                final session = sessionManager.getSession(entry.value)!;
+                Icon typeIcon;
+                String typeName = session.sessionData.whichKind().name;
+                switch (session.sessionData.whichKind()) {
+                  case SessionData_Kind.lpf:
+                    {
+                      typeIcon = Icon(Symbols.valve);
+                      break;
+                    }
+                  case SessionData_Kind.pty:
+                    {
+                      typeIcon = Icon(Symbols.terminal);
+                      break;
+                    }
+                  case SessionData_Kind.sftp:
+                    {
+                      typeIcon = Icon(Symbols.folder);
+                      break;
+                    }
+                  case SessionData_Kind.notSet:
+                    {
+                      typeIcon = Icon(Symbols.question_mark);
+                      break;
+                    }
+                }
+                return Padding(
+                  padding: const EdgeInsets.only(left: 16.0),
+                  child: ListTile(
+                    title: Row(
+                      children: [
+                        typeIcon,
+                        SizedBox(width: 10),
+                        Text("${typeName}: ${entry.value.substring(0, 4)}"),
+                        Spacer(),
+                        IconButton(
+                            onPressed: () {
+                              handleSessionRemove(entry.value, sessionManager);
+                            },
+                            icon: Icon(Symbols.delete))
+                      ],
+                    ),
+                    selected: sessionManager.selectedSession == entry.value,
+                    selectedColor: Colors.pink,
+                    onTap: () {
+                      setState(() {
+                        sessionManager.selectedSession = entry.value;
+                      });
+                    },
+                  ),
+                );
+              }).toList(),
+            );
+            return tile;
+          }).toList(),
+        ],
+      );
+    });
   }
 
   Widget _buildMioNavigationDrawer() {
@@ -698,33 +700,115 @@ class _MyHomePageState extends State<MyHomePage> {
   }
 
   Widget _buildSessionPage() {
-    return Row(children: [
-      Expanded(
-          child: _selectedSessionIndex > 1
-              ? sessionViews.values.elementAt(_selectedSessionIndex - 2)
-              : Center(child: Text('No sessions yet!'))),
-    ]);
+    return Consumer<SessionManager>(builder: (context, sessionManager, child) {
+      return Row(children: [
+        Expanded(
+            child: sessionManager.selectedSession.isNotEmpty
+                ? sessionViews[sessionManager.selectedSession]!
+                : Center(
+                    child:
+                        Text('Open or create a new session from the drawer.'))),
+      ]);
+    });
   }
 
   Widget _buildSessionPageSmall() {
-    return Scaffold(
-      appBar: AppBar(
-        title: Text("Sessions"),
-        leading: Builder(
-          builder: (context) => IconButton(
-            icon: Icon(Icons.menu),
-            onPressed: () {
-              // Open the drawer using the context provided by Builder
-              Scaffold.of(context).openDrawer();
-            },
+    return Consumer<SessionManager>(builder: (context, sessionManager, child) {
+      final sessionNow =
+          sessionManager.getSession(sessionManager.selectedSession);
+      final title = sessionNow == null
+          ? Text("Home")
+          : Row(
+              children: [
+                _buildConnStatus(sessionNow!.sessionData.deviceId),
+                SizedBox(
+                  width: 10,
+                ),
+                Text(
+                    "${sessionNow.sessionData.deviceId}: ${sessionNow.sessionId.substring(0, 4)}")
+              ],
+            );
+
+      final copyClipboardButton = sessionNow == null ||
+              sessionNow.terminalState == null
+          ? Container()
+          : PopupMenuButton<String>(
+              onSelected: (String result) async {
+                final terminal = sessionNow.terminalState!.terminal;
+                final controller = sessionNow.terminalState!.terminalController;
+                switch (result) {
+                  case 'paste':
+                    {
+                      final data = await Clipboard.getData('text/plain');
+                      final text = data?.text;
+                      if (text != null) {
+                        terminal.paste(text);
+                      }
+                    }
+                  case 'copy':
+                    {
+                      final selection = controller.selection;
+                      if (selection == null) return;
+                      final text = terminal.buffer.getText(selection);
+                      controller.clearSelection();
+                      await Clipboard.setData(ClipboardData(text: text));
+                    }
+                }
+              },
+              itemBuilder: (BuildContext context) => <PopupMenuEntry<String>>[
+                const PopupMenuItem<String>(
+                  value: 'paste',
+                  child: Row(
+                    children: [
+                      Icon(Symbols.content_copy),
+                      SizedBox(width: 10),
+                      Text('Paste clipboard')
+                    ],
+                  ),
+                ),
+                const PopupMenuItem<String>(
+                  value: 'copy',
+                  child: Row(
+                    children: [
+                      Icon(Symbols.content_paste),
+                      SizedBox(width: 10),
+                      Text('Copy to clipboard')
+                    ],
+                  ),
+                ),
+              ],
+            );
+
+      return Scaffold(
+        appBar: AppBar(
+          title: title,
+          actions: [copyClipboardButton],
+          leading: Builder(
+            builder: (context) => IconButton(
+              icon: Icon(Icons.menu),
+              onPressed: () {
+                // Open the drawer using the context provided by Builder
+                Scaffold.of(context).openDrawer();
+              },
+            ),
           ),
         ),
-      ),
-      drawer: Drawer(child: _buildSessionListView()),
-      body: _selectedSessionIndex > 1
-          ? sessionViews.values.elementAt(_selectedSessionIndex - 2)
-          : Center(child: Text('No sessions yet!')),
-    );
+        drawer: Drawer(child: _buildSessionListView()),
+        body: Builder(
+          builder: (context) {
+            if (sessionManager.selectedSession.isNotEmpty) {
+              // Get the session view based on the selected session
+              final selectedView = sessionViews[sessionManager.selectedSession];
+              if (selectedView != null) {
+                return selectedView;
+              }
+            }
+            return Center(
+                child: Text('Open or create a new session from the drawer.'));
+          },
+        ),
+      );
+    });
   }
 
   @override

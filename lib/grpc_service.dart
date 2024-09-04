@@ -13,7 +13,7 @@ import 'package:sessio_ui/main.dart';
 import 'package:sessio_ui/model/session_manager.dart';
 import 'package:sessio_ui/model/sftp/sftp.dart';
 import 'package:sessio_ui/model/terminal_state.dart';
-import 'package:sessio_ui/src/generated/client_ipc.pbgrpc.dart';
+import 'package:sessio_ui/src/generated/proto/client_ipc.pbgrpc.dart';
 import 'package:path_provider/path_provider.dart';
 
 class GrpcService {

@@ -1,6 +1,6 @@
 //
 //  Generated code. Do not modify.
-//  source: client_ipc.proto
+//  source: proto/client_ipc.proto
 //
 // @dart = 2.12
 
@@ -28,6 +28,30 @@ const NatFilterType$json = {
 final $typed_data.Uint8List natFilterTypeDescriptor = $convert.base64Decode(
     'Cg1OYXRGaWx0ZXJUeXBlEhgKFEVORFBPSU5UX0lOREVQRU5ERU5UEAASFQoRQUREUkVTU19ERV'
     'BFTkRFTlQQARIeChpBRERSRVNTX0FORF9QT1JUX0RFUEVOREVOVBACEgsKB1VOS05PV04QAw==');
+
+@$core.Deprecated('Use sessionCloseRequestDescriptor instead')
+const SessionCloseRequest$json = {
+  '1': 'SessionCloseRequest',
+  '2': [
+    {'1': 'session_id', '3': 1, '4': 1, '5': 9, '10': 'sessionId'},
+  ],
+};
+
+/// Descriptor for `SessionCloseRequest`. Decode as a `google.protobuf.DescriptorProto`.
+final $typed_data.Uint8List sessionCloseRequestDescriptor = $convert.base64Decode(
+    'ChNTZXNzaW9uQ2xvc2VSZXF1ZXN0Eh0KCnNlc3Npb25faWQYASABKAlSCXNlc3Npb25JZA==');
+
+@$core.Deprecated('Use sessionCloseResponseDescriptor instead')
+const SessionCloseResponse$json = {
+  '1': 'SessionCloseResponse',
+  '2': [
+    {'1': 'closed', '3': 1, '4': 1, '5': 8, '10': 'closed'},
+  ],
+};
+
+/// Descriptor for `SessionCloseResponse`. Decode as a `google.protobuf.DescriptorProto`.
+final $typed_data.Uint8List sessionCloseResponseDescriptor = $convert.base64Decode(
+    'ChRTZXNzaW9uQ2xvc2VSZXNwb25zZRIWCgZjbG9zZWQYASABKAhSBmNsb3NlZA==');
 
 @$core.Deprecated('Use fileDelDataDescriptor instead')
 const FileDelData$json = {

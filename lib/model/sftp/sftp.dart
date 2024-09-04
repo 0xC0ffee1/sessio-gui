@@ -1,7 +1,7 @@
 import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:sessio_ui/model/sftp/browser.dart';
-import 'package:sessio_ui/src/generated/client_ipc.pbgrpc.dart';
+import 'package:sessio_ui/src/generated/proto/client_ipc.pbgrpc.dart';
 
 class SftpBrowser extends FileBrowser {
   List<String> _currentPath = [];

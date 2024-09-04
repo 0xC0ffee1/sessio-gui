@@ -1,6 +1,6 @@
 //
 //  Generated code. Do not modify.
-//  source: client_ipc.proto
+//  source: proto/client_ipc.proto
 //
 // @dart = 2.12
 
@@ -41,6 +41,10 @@ class ClientIPCClient extends $grpc.Client {
       '/clientipc.ClientIPC/OpenChannel',
       ($0.Msg value) => value.writeToBuffer(),
       ($core.List<$core.int> value) => $0.Msg.fromBuffer(value));
+  static final _$closeSession = $grpc.ClientMethod<$0.SessionCloseRequest, $0.SessionCloseResponse>(
+      '/clientipc.ClientIPC/CloseSession',
+      ($0.SessionCloseRequest value) => value.writeToBuffer(),
+      ($core.List<$core.int> value) => $0.SessionCloseResponse.fromBuffer(value));
   static final _$checkSettingsValidity = $grpc.ClientMethod<$0.SettingCheckRequest, $0.SettingCheckResponse>(
       '/clientipc.ClientIPC/CheckSettingsValidity',
       ($0.SettingCheckRequest value) => value.writeToBuffer(),
@@ -126,6 +130,10 @@ class ClientIPCClient extends $grpc.Client {
 
   $grpc.ResponseStream<$0.Msg> openChannel($async.Stream<$0.Msg> request, {$grpc.CallOptions? options}) {
     return $createStreamingCall(_$openChannel, request, options: options);
+  }
+
+  $grpc.ResponseFuture<$0.SessionCloseResponse> closeSession($0.SessionCloseRequest request, {$grpc.CallOptions? options}) {
+    return $createUnaryCall(_$closeSession, request, options: options);
   }
 
   $grpc.ResponseFuture<$0.SettingCheckResponse> checkSettingsValidity($0.SettingCheckRequest request, {$grpc.CallOptions? options}) {
@@ -229,6 +237,13 @@ abstract class ClientIPCServiceBase extends $grpc.Service {
         true,
         ($core.List<$core.int> value) => $0.Msg.fromBuffer(value),
         ($0.Msg value) => value.writeToBuffer()));
+    $addMethod($grpc.ServiceMethod<$0.SessionCloseRequest, $0.SessionCloseResponse>(
+        'CloseSession',
+        closeSession_Pre,
+        false,
+        false,
+        ($core.List<$core.int> value) => $0.SessionCloseRequest.fromBuffer(value),
+        ($0.SessionCloseResponse value) => value.writeToBuffer()));
     $addMethod($grpc.ServiceMethod<$0.SettingCheckRequest, $0.SettingCheckResponse>(
         'CheckSettingsValidity',
         checkSettingsValidity_Pre,
@@ -352,6 +367,10 @@ abstract class ClientIPCServiceBase extends $grpc.Service {
     return getPublicKey(call, await request);
   }
 
+  $async.Future<$0.SessionCloseResponse> closeSession_Pre($grpc.ServiceCall call, $async.Future<$0.SessionCloseRequest> request) async {
+    return closeSession(call, await request);
+  }
+
   $async.Future<$0.SettingCheckResponse> checkSettingsValidity_Pre($grpc.ServiceCall call, $async.Future<$0.SettingCheckRequest> request) async {
     return checkSettingsValidity(call, await request);
   }
@@ -417,6 +436,7 @@ abstract class ClientIPCServiceBase extends $grpc.Service {
   $async.Future<$0.GenKeysResponse> genKeys($grpc.ServiceCall call, $0.GenKeysRequest request);
   $async.Future<$0.PublicKey> getPublicKey($grpc.ServiceCall call, $0.GetKeyRequest request);
   $async.Stream<$0.Msg> openChannel($grpc.ServiceCall call, $async.Stream<$0.Msg> request);
+  $async.Future<$0.SessionCloseResponse> closeSession($grpc.ServiceCall call, $0.SessionCloseRequest request);
   $async.Future<$0.SettingCheckResponse> checkSettingsValidity($grpc.ServiceCall call, $0.SettingCheckRequest request);
   $async.Future<$0.CoordinatorStartResponse> startCoordinator($grpc.ServiceCall call, $0.CoordinatorStartRequest request);
   $async.Future<$0.LocalPortForwardResponse> localPortForward($grpc.ServiceCall call, $0.SessionData request);

@@ -142,17 +142,6 @@ class _FileBrowserViewState extends SessionViewState<FileBrowserView> {
     return ChangeNotifierProvider<FileBrowser>.value(
       value: widget._browser,
       child: Scaffold(
-        appBar: AppBar(
-          title: const Text('File Browser'),
-          actions: [
-            IconButton(
-              icon: const Icon(Icons.refresh),
-              onPressed: () {
-                widget._browser.refreshFileList();
-              },
-            ),
-          ],
-        ),
         body: Stack(
           children: [
             Column(

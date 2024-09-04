@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:sessio_ui/model/terminal_state.dart';
-import 'package:sessio_ui/src/generated/client_ipc.pbgrpc.dart';
+import 'package:sessio_ui/src/generated/proto/client_ipc.pbgrpc.dart';
 
 class SessionState extends ChangeNotifier {
   final String sessionId;

@@ -1,7 +1,6 @@
 import 'dart:io';
 
 import 'package:flutter/material.dart';
-import 'package:sessio_ui/src/generated/client_ipc.pbgrpc.dart';
 
 abstract class FileBrowser with ChangeNotifier {
   List<String> get currentPath;

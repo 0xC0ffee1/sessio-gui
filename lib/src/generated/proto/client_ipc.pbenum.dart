@@ -1,6 +1,6 @@
 //
 //  Generated code. Do not modify.
-//  source: client_ipc.proto
+//  source: proto/client_ipc.proto
 //
 // @dart = 2.12
 

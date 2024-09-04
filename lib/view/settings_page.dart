@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:provider/provider.dart';
 import 'package:sessio_ui/grpc_service.dart';
-import 'package:sessio_ui/src/generated/client_ipc.pbgrpc.dart';
+import 'package:sessio_ui/src/generated/proto/client_ipc.pbgrpc.dart';
 
 class SettingsPage extends StatefulWidget {
   final String? caption;

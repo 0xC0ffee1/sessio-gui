@@ -3,13 +3,39 @@ import 'package:provider/provider.dart';
 import 'package:sessio_ui/grpc_service.dart';
 import 'package:sessio_ui/model/session_state.dart';
 import 'package:sessio_ui/model/terminal_state.dart';
-import 'package:sessio_ui/src/generated/client_ipc.pbgrpc.dart';
+
+import 'package:sessio_ui/src/generated/proto/client_ipc.pbgrpc.dart';
 import 'package:uuid/uuid.dart';
 
 class SessionManager extends ChangeNotifier {
   final Map<String, SessionState> _sessions = {};
   final Map<String, List<String>> _deviceSessions = {};
   Map<String, bool> deviceStatus = {};
+  String _selectedSession = "";
+
+  String get selectedSession => _selectedSession;
+  set selectedSession(String value) {
+    _selectedSession = value;
+  }
+
+  void removeSession(BuildContext context, String sessionId) {
+    final session = _sessions.remove(sessionId);
+    if (session == null) return;
+    _deviceSessions[session.sessionData.deviceId]?.remove(sessionId);
+    if (_deviceSessions[session.sessionData.deviceId]!.isEmpty) {
+      _deviceSessions.remove(session.sessionData.deviceId);
+    }
+    final grpcService = Provider.of<GrpcService>(context, listen: false);
+
+    grpcService.client.closeSession(SessionCloseRequest(sessionId: sessionId));
+    grpcService.deleteSessionSave(sessionId);
+    session.closed = true;
+    final last = _sessions.values.lastOrNull;
+    _selectedSession = last != null ? last.sessionId : "";
+
+    //todo add close method for grpc
+    notifyListeners();
+  }
 
   void addSession(String deviceId, SessionState sessionState) {
     _sessions[sessionState.sessionId] = sessionState;
@@ -31,6 +57,8 @@ class SessionManager extends ChangeNotifier {
   List<String>? getDeviceSessions(String deviceId) {
     return _deviceSessions[deviceId];
   }
+
+  Map<String, List<String>> get allDeviceSessions => _deviceSessions;
 
   void createSession(
       BuildContext context, SessionData data, SessioTerminalState? state) {
